@@ -45,4 +45,16 @@ static inline Token *lexer_curr(Lexer *this) {
     return this->curr;
 }
 
+static inline enum token_type token_type(Token *this) {
+    return this->type;
+}
+
+static inline double token_number(Token *this) {
+    return ((NumericToken *)this)->value;
+}
+
+static inline const char *token_varname(Token *this) {
+    return ((VarNameToken *)this)->value;
+}
+
 #endif
