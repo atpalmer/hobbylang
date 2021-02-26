@@ -23,17 +23,17 @@ Token *lexer_curr(Lexer *this) {
 
 static int _is_whitespace(char c) {
     static const char VALID[] = " \t\r\n";
-    return strchr(VALID, c) ? 1 : 0;
+    return memchr(VALID, c, strlen(VALID)) ? 1 : 0;
 }
 
 static int _is_alpha(char c) {
     static const char VALID[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_";
-    return strchr(VALID, c) ? 1 : 0;
+    return memchr(VALID, c, strlen(VALID)) ? 1 : 0;
 }
 
 static int _is_numeric(char c) {
     static const char VALID[] = "0123456789.";
-    return strchr(VALID, c) ? 1 : 0;
+    return memchr(VALID, c, strlen(VALID)) ? 1 : 0;
 }
 
 static int _is_literal(char c) {
