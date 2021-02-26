@@ -20,6 +20,11 @@ Token *lexer_curr(Lexer *this) {
     return this->curr;
 }
 
+static int _is_whitespace(char c) {
+    static const char VALID[] = " \t\r\n";
+    return strchr(VALID, c) ? 1 : 0;
+}
+
 static int _is_alpha(char c) {
     static const char VALID[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_";
     return strchr(VALID, c) ? 1 : 0;
@@ -91,6 +96,9 @@ Token *lexer_next(Lexer *this) {
         free(this->curr);
         this->curr = NULL;
     }
+
+    while(_is_whitespace(this->data[this->pos]))
+        ++this->pos;
 
     char c = this->data[this->pos];
 
