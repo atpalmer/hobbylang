@@ -3,7 +3,7 @@
 #include "lexer.h"
 
 void test_lexer() {
-    Lexer *lexer = lexer_new("123");
+    Lexer *lexer = lexer_new("123 + 456");
 
     printf("data: %s\n", lexer->data);
 
