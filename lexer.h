@@ -11,8 +11,8 @@ enum token_type {
     TOKT_EQ = '=',
     TOKT_LPAREN = '(',
     TOKT_RPAREN = ')',
-    TOKT_NUMBER,
-    TOKT_VARIABLE,
+    TOKT_NUMBER = -1,
+    TOKT_VARIABLE = -2,
 };
 
 typedef struct {
@@ -31,6 +31,7 @@ typedef struct {
 
 typedef struct {
     const char *data;
+    int len;
     int pos;
     Token *curr;
 } Lexer;
@@ -38,5 +39,7 @@ typedef struct {
 
 Lexer *lexer_new(const char *data);
 void lexer_free(Lexer *this);
+Token *lexer_curr(Lexer *this);
+Token *lexer_next(Lexer *this);
 
 #endif

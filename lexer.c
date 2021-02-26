@@ -5,6 +5,7 @@
 Lexer *lexer_new(const char *data) {
     Lexer *new = malloc(sizeof *new);
     new->data = data;
+    new->len = strlen(data);
     new->pos = 0;
     new->curr = NULL;
     return new;
@@ -96,6 +97,9 @@ Token *lexer_next(Lexer *this) {
         free(this->curr);
         this->curr = NULL;
     }
+
+    if(this->pos >= this->len)
+        return NULL;
 
     while(_is_whitespace(this->data[this->pos]))
         ++this->pos;
