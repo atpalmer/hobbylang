@@ -27,6 +27,18 @@ void test_lexer() {
     lexer_free(lexer);
 }
 
+void test_parser() {
+    Parser *parser = parser_new("-2");
+
+    while(parser_has_next(parser)) {
+        double val = parser_next_expr(parser);
+        printf("Result: %f\n", val);
+    }
+
+    parser_free(parser);
+}
+
 int main(void) {
-    test_lexer();
+    /* test_lexer(); */
+    test_parser();
 }
