@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include "common.h"
 #include "lexer.h"
 
 Lexer *lexer_new(const char *data) {
@@ -23,17 +24,17 @@ Token *lexer_curr(Lexer *this) {
 
 static int _is_whitespace(char c) {
     static const char VALID[] = " \t\r\n";
-    return memchr(VALID, c, strlen(VALID)) ? 1 : 0;
+    return BOOL(memchr(VALID, c, strlen(VALID)));
 }
 
 static int _is_alpha(char c) {
     static const char VALID[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_";
-    return memchr(VALID, c, strlen(VALID)) ? 1 : 0;
+    return BOOL(memchr(VALID, c, strlen(VALID)));
 }
 
 static int _is_numeric(char c) {
     static const char VALID[] = "0123456789.";
-    return memchr(VALID, c, strlen(VALID)) ? 1 : 0;
+    return BOOL(memchr(VALID, c, strlen(VALID)));
 }
 
 static int _is_literal(char c) {
@@ -48,7 +49,7 @@ static int _is_literal(char c) {
         TOKT_LPAREN,
         TOKT_RPAREN,
     };
-    return memchr(VALID, c, sizeof VALID / sizeof *VALID) ? 1 : 0;
+    return BOOL(memchr(VALID, c, sizeof VALID / sizeof *VALID));
 }
 
 static double _read_val(Lexer *this) {
