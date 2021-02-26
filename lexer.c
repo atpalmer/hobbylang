@@ -48,7 +48,7 @@ static int _is_literal(char c) {
         TOKT_LPAREN,
         TOKT_RPAREN,
     };
-    return strchr(VALID, c) ? 1 : 0;
+    return memchr(VALID, c, sizeof VALID / sizeof *VALID) ? 1 : 0;
 }
 
 static double _read_val(Lexer *this) {
