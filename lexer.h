@@ -39,7 +39,10 @@ typedef struct {
 
 Lexer *lexer_new(const char *data);
 void lexer_free(Lexer *this);
-Token *lexer_curr(Lexer *this);
 Token *lexer_next(Lexer *this);
+
+static inline Token *lexer_curr(Lexer *this) {
+    return this->curr;
+}
 
 #endif

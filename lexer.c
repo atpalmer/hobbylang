@@ -18,10 +18,6 @@ void lexer_free(Lexer *this) {
     free(this);
 }
 
-Token *lexer_curr(Lexer *this) {
-    return this->curr;
-}
-
 static int _is_whitespace(char c) {
     static const char VALID[] = " \t\r\n";
     return BOOL(memchr(VALID, c, strlen(VALID)));
