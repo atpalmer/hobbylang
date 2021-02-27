@@ -1,5 +1,6 @@
 P=calc
 OBJECTS=main.o lexer.o parser.o
+CFLAGS=-Wall -Wextra -pedantic -g
 
 $P: $(OBJECTS)
 	$(CC) -o $P $(OBJECTS)
