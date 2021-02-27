@@ -59,7 +59,7 @@ static double _read_val(Lexer *this) {
     return atof(valstr);
 }
 
-static void _read_varname(Lexer *this, char *buff, size_t bufflen) {
+static void _read_varname(Lexer *this, char *buff, int bufflen) {
     char *valp = buff;
     while(_is_alpha(this->data[this->pos])) {
         *(valp++) = this->data[this->pos++];
