@@ -95,7 +95,7 @@ Token *lexer_next(Lexer *this) {
         this->curr = NULL;
     }
 
-    if(this->pos >= this->len)
+    if(!lexer_has_next(this))
         return NULL;
 
     while(_is_whitespace(this->data[this->pos]))
