@@ -112,3 +112,14 @@ Token *lexer_next(Lexer *this) {
 
     return this->curr;
 }
+
+Token *lexer_peek(Lexer *this) {
+    Lexer tmp = {
+        .data = this->data,
+        .len = this->len,
+        .pos = this->pos,
+        .curr = NULL,
+    };
+
+    return lexer_next(&tmp);
+}
