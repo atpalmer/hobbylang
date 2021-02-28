@@ -8,7 +8,7 @@ $P: $(OBJECTS)
 .PHONY: clean all run
 
 clean:
-	rm $(OBJECTS) $P
+	-rm $(OBJECTS) $P
 
 all: clean $P
 
