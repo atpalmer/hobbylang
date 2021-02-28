@@ -50,15 +50,45 @@ void parser_free(Parser *this) {
     free(this);
 }
 
-double parser_next_expr(Parser *this) {
+double parser_next_atom(Parser *this) {
     Token *curr = lexer_next(this->lexer);
 
-    if(token_type(curr) == TOKT_NUMBER)
+    switch(token_type(curr)) {
+    case TOKT_NUMBER:
         return token_number(curr);
-    if(token_type(curr) == TOKT_SUB)
-        return -parser_next_expr(this);
+    case TOKT_SUB:
+        return -parser_next_atom(this);
+    default:
+        break;
+    }
 
     assert(0);  /* TODO: report error */
+}
+
+double parser_next_expr(Parser *this) {
+    double result = parser_next_atom(this);
+
+    Token *op = lexer_peek(this->lexer);
+    if(!op)
+        goto done;
+
+    switch(token_type(op)) {
+    case TOKT_ADD:
+        lexer_next(this->lexer);
+        result += parser_next_expr(this);
+        break;
+    case TOKT_SUB:
+        lexer_next(this->lexer);
+        result -= parser_next_expr(this);
+        break;
+    default:
+        break;
+    }
+
+    free(op);
+
+done:
+    return result;
 }
 
 int parser_has_next(Parser *this) {
