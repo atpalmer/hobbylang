@@ -65,8 +65,34 @@ double parser_next_atom(Parser *this) {
     assert(0);  /* TODO: report error */
 }
 
-double parser_next_expr(Parser *this) {
+double parser_next_term(Parser *this) {
     double result = parser_next_atom(this);
+
+    Token *op = lexer_peek(this->lexer);
+    if(!op)
+        goto done;
+
+    switch(token_type(op)) {
+    case TOKT_MULT:
+        lexer_next(this->lexer);
+        result *= parser_next_term(this);
+        break;
+    case TOKT_DIV:
+        lexer_next(this->lexer);
+        result /= parser_next_term(this);
+        break;
+    default:
+        break;
+    }
+
+    free(op);
+
+done:
+    return result;
+}
+
+double parser_next_expr(Parser *this) {
+    double result = parser_next_term(this);
 
     Token *op = lexer_peek(this->lexer);
     if(!op)

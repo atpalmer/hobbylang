@@ -28,7 +28,7 @@ void test_lexer() {
 }
 
 void test_parser() {
-    Parser *parser = parser_new("-2 + 3 + 5 - 1");
+    Parser *parser = parser_new("-2 + 3 * 2 + 5 - 1");
 
     while(parser_has_next(parser)) {
         double val = parser_next_expr(parser);
