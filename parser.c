@@ -1,4 +1,4 @@
-#include <assert.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "common.h"
@@ -62,7 +62,9 @@ double parser_next_atom(Parser *this) {
         break;
     }
 
-    assert(0);  /* TODO: report error */
+    fprintf(stderr, "Parse error. Position: %d. Expected: TOKT_NUMBER. Found: '%c' (%d)\n",
+            this->lexer->pos, token_type(curr), token_type(curr));
+    exit(-1);
 }
 
 double parser_next_term(Parser *this) {
