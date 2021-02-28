@@ -13,8 +13,7 @@ Lexer *lexer_new(const char *data) {
 }
 
 void lexer_free(Lexer *this) {
-    if(this->curr)
-        free(this->curr);
+    token_free(&this->curr);
     free(this);
 }
 
@@ -89,11 +88,14 @@ static Token *token_new_varname(Lexer *lexer) {
     return (Token *)new;
 }
 
+void token_free(Token **this) {
+    if(*this)
+        free(*this);
+    *this = NULL;
+}
+
 Token *lexer_next(Lexer *this) {
-    if(this->curr) {
-        free(this->curr);
-        this->curr = NULL;
-    }
+    token_free(&this->curr);
 
     if(!lexer_has_next(this))
         return NULL;

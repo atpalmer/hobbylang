@@ -50,6 +50,8 @@ static inline Token *lexer_curr(Lexer *this) {
     return this->curr;
 }
 
+void token_free(Token **this);
+
 static inline enum token_type token_type(Token *this) {
     return this->type;
 }
