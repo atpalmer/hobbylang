@@ -87,7 +87,7 @@ double parser_next_term(Parser *this) {
         break;
     }
 
-    free(op);
+    token_free(&op);
 
 done:
     return result;
@@ -113,7 +113,7 @@ double parser_next_expr(Parser *this) {
         break;
     }
 
-    free(op);
+    token_free(&op);
 
 done:
     return result;
