@@ -68,23 +68,27 @@ static void _read_varname(Lexer *this, char *buff, int bufflen) {
     *valp = '\0';
 }
 
+static void token_base_init(Token *base, enum token_type type) {
+    base->type = type;
+}
+
 static Token *token_new_literal(Lexer *lexer) {
     Token *new = malloc(sizeof *new);
-    new->type = lexer->data[lexer->pos++];
+    token_base_init(new, lexer->data[lexer->pos++]);
     return new;
 }
 
 static Token *token_new_numeric(Lexer *lexer) {
     NumericToken *new = malloc(sizeof *new);
-    new->type = TOKT_NUMBER;
     new->value = _read_val(lexer);
+    token_base_init(&new->base, TOKT_NUMBER);
     return (Token *)new;
 }
 
 static Token *token_new_varname(Lexer *lexer) {
     VarNameToken *new = malloc(sizeof *new + 32 * sizeof(*new->value));
-    new->type = TOKT_VARIABLE;
     _read_varname(lexer, new->value, 32);
+    token_base_init(&new->base, TOKT_VARIABLE);
     return (Token *)new;
 }
 

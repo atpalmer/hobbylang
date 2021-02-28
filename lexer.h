@@ -20,12 +20,12 @@ typedef struct {
 } Token;
 
 typedef struct {
-    enum token_type type;
+    Token base;
     char value[];
 } VarNameToken;
 
 typedef struct {
-    enum token_type type;
+    Token base;
     double value;
 } NumericToken;
 
