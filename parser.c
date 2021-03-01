@@ -51,35 +51,40 @@ void parser_free(Parser *this) {
 }
 
 double parser_next_atom(Parser *this) {
-    Token *curr = lexer_peek(this->lexer);
+    Token *peek = lexer_peek(this->lexer);
 
-    switch(token_type(curr)) {
+    switch(token_type(peek)) {
     case TOKT_NUMBER:
-        lexer_handle_next(this->lexer);
-        return token_number(curr);
+        {
+            double result = token_number(peek);
+            lexer_consume_peek(this->lexer);
+            return result;
+        }
     case TOKT_SUB:
-        lexer_handle_next(this->lexer);
-        return -parser_next_atom(this);
+        {
+            lexer_consume_peek(this->lexer);
+            return -parser_next_atom(this);
+        }
     default:
         break;
     }
 
     fprintf(stderr, "Parse error. Position: %d. Expected: TOKT_NUMBER. Found: '%c' (%d)\n",
-            this->lexer->pos, token_type(curr), token_type(curr));
+            this->lexer->pos, token_type(peek), token_type(peek));
     exit(-1);
 }
 
 double parser_next_term(Parser *this) {
     double left = parser_next_atom(this);
 
-    Token *op = lexer_peek(this->lexer);
+    Token *peek = lexer_peek(this->lexer);
 
-    switch(token_type(op)) {
+    switch(token_type(peek)) {
     case TOKT_MULT:
-        lexer_handle_next(this->lexer);
+        lexer_consume_peek(this->lexer);
         return left * parser_next_term(this);
     case TOKT_DIV:
-        lexer_handle_next(this->lexer);
+        lexer_consume_peek(this->lexer);
         return left / parser_next_term(this);
     default:
         break;
@@ -91,14 +96,14 @@ double parser_next_term(Parser *this) {
 double parser_next_expr(Parser *this) {
     double left = parser_next_term(this);
 
-    Token *op = lexer_peek(this->lexer);
+    Token *peek = lexer_peek(this->lexer);
 
-    switch(token_type(op)) {
+    switch(token_type(peek)) {
     case TOKT_ADD:
-        lexer_handle_next(this->lexer);
+        lexer_consume_peek(this->lexer);
         return left + parser_next_expr(this);
     case TOKT_SUB:
-        lexer_handle_next(this->lexer);
+        lexer_consume_peek(this->lexer);
         return left - parser_next_expr(this);
     default:
         break;

@@ -41,7 +41,7 @@ typedef struct {
 Lexer *lexer_new(const char *data);
 void lexer_free(Lexer *this);
 Token *lexer_peek(Lexer *this);
-void lexer_handle_next(Lexer *this);
+void lexer_consume_peek(Lexer *this);
 
 static inline enum token_type token_type(Token *this) {
     return this ? this->type : TOKT_NULL;

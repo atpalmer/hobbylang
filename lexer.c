@@ -131,7 +131,7 @@ Token *lexer_peek(Lexer *this) {
     return this->peek;
 }
 
-void lexer_handle_next(Lexer *this) {
+void lexer_consume_peek(Lexer *this) {
     if(!this->peek)
         return;
     while(_is_whitespace(this->data[this->pos]))
