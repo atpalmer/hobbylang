@@ -1,12 +1,27 @@
 #include <stdio.h>
+#include <string.h>
 #include "parser.h"
 #include "lexer.h"
+
+static void assert_equal_char(int left, int right) {
+    if(left == right)
+        printf("OK: '%c' (%d) == '%c' (%d)\n", left, left, right, right);
+    else
+        fprintf(stderr, "ERROR: '%c' (%d)!= '%c' (%d)\n", left, left, right, right);
+}
 
 static void assert_equal_double(double left, double right) {
     if(left == right)
         printf("OK: %f == %f\n", left, right);
     else
         fprintf(stderr, "ERROR: %f != %f\n", left, right);
+}
+
+static void assert_equal_string(const char *left, const char *right) {
+    if(strcmp(left, right) == 0)
+        printf("OK: \"%s\" == \"%s\"\n", left, right);
+    else
+        fprintf(stderr, "ERROR: \"%s\" != \"%s\"\n", left, right);
 }
 
 static void assert_true(int val) {
@@ -33,26 +48,53 @@ void test_lexer(void) {
 
     printf("PROGRAM:\n%s\n", lexer->data);
 
-    for(;;) {
-        Token *peek = lexer_peek(lexer);
-        if(!peek)
-            break;
+    assert_equal_char(token_type(lexer_peek(lexer)), TOKT_VARIABLE);
+    assert_equal_string(token_varname(lexer_peek(lexer)), "x");
+    lexer_consume_peek(lexer);
 
-        switch(token_type(peek)) {
-        case TOKT_NUMBER:
-            printf("number: %f\n", token_number(peek));
-            lexer_consume_peek(lexer);
-            break;
-        case TOKT_VARIABLE:
-            printf("variable: \"%s\"\n", token_varname(peek));
-            lexer_consume_peek(lexer);
-            break;
-        default:
-            printf("Type: %c (%d)\n", token_type(peek), token_type(peek));
-            lexer_consume_peek(lexer);
-            break;
-        }
-    }
+    assert_equal_char(token_type(lexer_peek(lexer)), TOKT_EQ);
+    lexer_consume_peek(lexer);
+
+    assert_equal_char(token_type(lexer_peek(lexer)), TOKT_NUMBER);
+    assert_equal_double(token_number(lexer_peek(lexer)), 2);
+    lexer_consume_peek(lexer);
+
+    assert_equal_char(token_type(lexer_peek(lexer)), TOKT_NEWLINE);
+    lexer_consume_peek(lexer);
+
+    assert_equal_char(token_type(lexer_peek(lexer)), TOKT_VARIABLE);
+    assert_equal_string(token_varname(lexer_peek(lexer)), "x");
+    lexer_consume_peek(lexer);
+
+    assert_equal_char(token_type(lexer_peek(lexer)), TOKT_MULT);
+    lexer_consume_peek(lexer);
+
+    assert_equal_char(token_type(lexer_peek(lexer)), TOKT_NUMBER);
+    assert_equal_double(token_number(lexer_peek(lexer)), 1.5);
+    lexer_consume_peek(lexer);
+
+    assert_equal_char(token_type(lexer_peek(lexer)), TOKT_ADD);
+    lexer_consume_peek(lexer);
+
+    assert_equal_char(token_type(lexer_peek(lexer)), TOKT_LPAREN);
+    lexer_consume_peek(lexer);
+
+    assert_equal_char(token_type(lexer_peek(lexer)), TOKT_NUMBER);
+    assert_equal_double(token_number(lexer_peek(lexer)), 123.0);
+    lexer_consume_peek(lexer);
+
+    assert_equal_char(token_type(lexer_peek(lexer)), TOKT_SUB);
+    lexer_consume_peek(lexer);
+
+    assert_equal_char(token_type(lexer_peek(lexer)), TOKT_NUMBER);
+    assert_equal_double(token_number(lexer_peek(lexer)), 456.0);
+    lexer_consume_peek(lexer);
+
+    assert_equal_char(token_type(lexer_peek(lexer)), TOKT_RPAREN);
+    lexer_consume_peek(lexer);
+
+    assert_equal_char(token_type(lexer_peek(lexer)), TOKT_NEWLINE);
+    lexer_consume_peek(lexer);
 
     lexer_free(lexer);
 }
