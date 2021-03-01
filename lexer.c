@@ -32,9 +32,12 @@ static int _is_numeric(char c) {
     return BOOL(memchr(VALID, c, strlen(VALID)));
 }
 
+static int _is_eof(char c) {
+    return c == '\0';
+}
+
 static int _is_literal(char c) {
     static const char VALID[] = {
-        TOKT_END,
         TOKT_PRINT,
         TOKT_ADD,
         TOKT_SUB,
@@ -112,7 +115,9 @@ Token *lexer_next(Lexer *this) {
 
     char c = this->data[this->pos];
 
-    if(_is_literal(c))
+    if(_is_eof(c))
+        this->curr = NULL;
+    else if(_is_literal(c))
         this->curr = token_new_literal(this);
     else if(_is_numeric(c))
         this->curr = token_new_numeric(this);

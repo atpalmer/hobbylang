@@ -14,9 +14,7 @@ void test_lexer() {
 
     while(lexer_next(lexer)) {
         Token *token = lexer_curr(lexer);
-        if(token->type == TOKT_END)
-            break;
-        else if(token->type == TOKT_NUMBER)
+        if(token->type == TOKT_NUMBER)
             printf("number: %f\n", ((NumericToken *)token)->value);
         else if(token->type == TOKT_VARIABLE)
             printf("variable: \"%s\"\n", ((VarNameToken *)token)->value);
@@ -39,6 +37,7 @@ void test_parser() {
 }
 
 int main(void) {
-    /* test_lexer(); */
+    test_lexer();
+    printf("---\n");
     test_parser();
 }
