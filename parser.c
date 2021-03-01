@@ -132,44 +132,55 @@ double parser_next_atom(Parser *this) {
 }
 
 double parser_next_term(Parser *this) {
-    double left = parser_next_atom(this);
+    double result = parser_next_atom(this);
 
-    Token *peek = lexer_peek(this->lexer);
+    for(;;) {
+        Token *peek = lexer_peek(this->lexer);
 
-    switch(token_type(peek)) {
-    case TOKT_MULT:
-        lexer_consume_peek(this->lexer);
-        return left * parser_next_term(this);
-    case TOKT_DIV:
-        lexer_consume_peek(this->lexer);
-        return left / parser_next_term(this);
-    case TOKT_MOD:
-        lexer_consume_peek(this->lexer);
-        return fmod(left, parser_next_term(this));
-    default:
-        break;
+        switch(token_type(peek)) {
+        case TOKT_MULT:
+            lexer_consume_peek(this->lexer);
+            result *= parser_next_atom(this);
+            break;
+        case TOKT_DIV:
+            lexer_consume_peek(this->lexer);
+            result /= parser_next_atom(this);
+            break;
+        case TOKT_MOD:
+            lexer_consume_peek(this->lexer);
+            result = fmod(result, parser_next_atom(this));
+            break;
+        default:
+            goto done;
+        }
     }
 
-    return left;
+done:
+    return result;
 }
 
 double parser_next_expr(Parser *this) {
-    double left = parser_next_term(this);
+    double result = parser_next_term(this);
 
-    Token *peek = lexer_peek(this->lexer);
+    for(;;) {
+        Token *peek = lexer_peek(this->lexer);
 
-    switch(token_type(peek)) {
-    case TOKT_ADD:
-        lexer_consume_peek(this->lexer);
-        return left + parser_next_expr(this);
-    case TOKT_SUB:
-        lexer_consume_peek(this->lexer);
-        return left - parser_next_expr(this);
-    default:
-        break;
+        switch(token_type(peek)) {
+        case TOKT_ADD:
+            lexer_consume_peek(this->lexer);
+            result += parser_next_term(this);
+            break;
+        case TOKT_SUB:
+            lexer_consume_peek(this->lexer);
+            result -= parser_next_term(this);
+            break;
+        default:
+            goto done;
+        }
     }
 
-    return left;
+done:
+    return result;
 }
 
 double parser_next_line(Parser *this) {
