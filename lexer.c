@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "common.h"
@@ -8,12 +9,10 @@ Lexer *lexer_new(const char *data) {
     new->data = data;
     new->len = strlen(data);
     new->pos = 0;
-    new->curr = NULL;
     return new;
 }
 
 void lexer_free(Lexer *this) {
-    token_free(&this->curr);
     free(this);
 }
 
@@ -105,8 +104,6 @@ void token_free(Token **this) {
 }
 
 Token *lexer_next(Lexer *this) {
-    token_free(&this->curr);
-
     if(!lexer_has_next(this))
         return NULL;
 
@@ -116,15 +113,16 @@ Token *lexer_next(Lexer *this) {
     char c = this->data[this->pos];
 
     if(_is_eof(c))
-        this->curr = NULL;
+        return NULL;
     else if(_is_literal(c))
-        this->curr = token_new_literal(this);
+        return token_new_literal(this);
     else if(_is_numeric(c))
-        this->curr = token_new_numeric(this);
+        return token_new_numeric(this);
     else if(_is_alpha(c))
-        this->curr = token_new_varname(this);
+        return token_new_varname(this);
 
-    return this->curr;
+    fprintf(stderr, "Lex error. Pos: %d\n", this->pos);
+    exit(-1);
 }
 
 Token *lexer_peek(Lexer *this) {
@@ -132,7 +130,6 @@ Token *lexer_peek(Lexer *this) {
         .data = this->data,
         .len = this->len,
         .pos = this->pos,
-        .curr = NULL,
     };
 
     return lexer_next(&tmp);

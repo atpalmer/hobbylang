@@ -34,7 +34,6 @@ typedef struct {
     const char *data;
     int len;
     int pos;
-    Token *curr;
 } Lexer;
 
 
