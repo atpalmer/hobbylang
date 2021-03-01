@@ -57,11 +57,11 @@ static int _is_literal(char c) {
     return BOOL(memchr(VALID, c, sizeof VALID / sizeof *VALID));
 }
 
-static int _read_val(Lexer *this, double *result) {
+static int _read_val(const char *data, double *result) {
     char valstr[32] = {0};
     char *valp = valstr;
-    while(_is_numeric(this->data[this->pos])) {
-        *(valp++) = this->data[this->pos++];
+    while(_is_numeric(*data)) {
+        *(valp++) = *data++;
         if(valp - valstr >= 32)
             break;
     }
@@ -69,10 +69,10 @@ static int _read_val(Lexer *this, double *result) {
     return valp - valstr;
 }
 
-static int _read_varname(Lexer *this, char *buff, int bufflen) {
+static int _read_varname(const char *data, char *buff, int bufflen) {
     char *valp = buff;
-    while(_is_alpha(this->data[this->pos])) {
-        *(valp++) = this->data[this->pos++];
+    while(_is_alpha(*data)) {
+        *(valp++) = *data++;
         if(valp - buff >= bufflen - 1)
             break;
     }
@@ -85,73 +85,57 @@ static void token_base_init(Token *base, enum token_type type, int bytes_read) {
     base->bytes_read = bytes_read;
 }
 
-static Token *token_new_literal(Lexer *lexer) {
+static Token *token_new_literal(const char *data) {
     Token *new = malloc(sizeof *new);
-    token_base_init(new, lexer->data[lexer->pos++], 1);
+    token_base_init(new, *data, 1);
     return new;
 }
 
-static Token *token_new_numeric(Lexer *lexer) {
+static Token *token_new_numeric(const char *data) {
     NumericToken *new = malloc(sizeof *new);
-    int bytes_read = _read_val(lexer, &new->value);
+    int bytes_read = _read_val(data, &new->value);
     token_base_init(&new->base, TOKT_NUMBER, bytes_read);
     return (Token *)new;
 }
 
-static Token *token_new_varname(Lexer *lexer) {
+static Token *token_new_varname(const char *data) {
     VarNameToken *new = malloc(sizeof *new + 32 * sizeof(*new->value));
-    int bytes_read = _read_varname(lexer, new->value, 32);
+    int bytes_read = _read_varname(data, new->value, 32);
     token_base_init(&new->base, TOKT_VARIABLE, bytes_read);
     return (Token *)new;
 }
 
-static Token *_lexer_next(Lexer *this) {
-    while(_is_whitespace(this->data[this->pos]))
-        ++this->pos;
+static Token *_peek(const char *data) {
+    while(_is_whitespace(*data))
+        ++data;
 
-    char c = this->data[this->pos];
-
-    if(_is_eof(c))
+    if(_is_eof(*data))
         return NULL;
-    else if(_is_literal(c))
-        return token_new_literal(this);
-    else if(_is_numeric(c))
-        return token_new_numeric(this);
-    else if(_is_alpha(c))
-        return token_new_varname(this);
+    else if(_is_literal(*data))
+        return token_new_literal(data);
+    else if(_is_numeric(*data))
+        return token_new_numeric(data);
+    else if(_is_alpha(*data))
+        return token_new_varname(data);
 
-    fprintf(stderr, "Lex error. Pos: %d\n", this->pos);
+    fprintf(stderr, "Lex error. Unhandled char: '%c'\n", *data);
     exit(-1);
 }
 
 Token *lexer_peek(Lexer *this) {
     if(this->peek)
         return this->peek;
-
-    _token_free(&this->peek);
-
     if(this->pos >= this->len)
         return NULL;
-
-    Lexer tmp = {
-        .data = this->data,
-        .len = this->len,
-        .pos = this->pos,
-        .peek = NULL,
-    };
-
-    this->peek = _lexer_next(&tmp);
+    this->peek = _peek(&this->data[this->pos]);
     return this->peek;
 }
 
 void lexer_handle_next(Lexer *this) {
     if(!this->peek)
         return;
-
     while(_is_whitespace(this->data[this->pos]))
         ++this->pos;
-
     this->pos += this->peek->bytes_read;
-
     _token_free(&this->peek);
 }
