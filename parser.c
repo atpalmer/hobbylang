@@ -60,7 +60,6 @@ static inline void parser_error(Lexer *lexer, const char *expected) {
             lexer->pos, expected, token_type(lexer->peek), token_type(lexer->peek));
 }
 
-double parser_next_atom(Parser *this);
 double parser_next_expr(Parser *this);
 
 double parser_handle_variable(Parser *this) {
@@ -78,7 +77,7 @@ double parser_handle_variable(Parser *this) {
 
     if(token_type(peek) == TOKT_EQ) {
         lexer_consume_peek(this->lexer);
-        result = parser_next_atom(this);
+        result = parser_next_expr(this);
         varmap_setval(&this->varmap, key, result);
     } else {
         result = varmap_getval(this->varmap, key, 0.0);

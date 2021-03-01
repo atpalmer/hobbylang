@@ -102,7 +102,7 @@ void test_lexer(void) {
 void test_parser(void) {
     static const char *PROGRAM =
             "42\n"
-            "x = 3\n"
+            "x = 2 + 1\n"
             "-2 + x * 2 + 5 - 1\n"
             "-2 + x * (2 + 5) - 1\n"
             "alfa = 1\n"
