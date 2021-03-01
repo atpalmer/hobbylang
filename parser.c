@@ -74,7 +74,7 @@ double parser_next_atom(Parser *this) {
 
 done:
     fprintf(stderr, "Parse error. Position: %d. Expected: TOKT_NUMBER. Found: EOF\n",
-            this->lexer->pos, token_type(curr), token_type(curr));
+            this->lexer->pos);
     exit(-1);
 }
 
