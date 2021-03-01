@@ -50,6 +50,11 @@ void parser_free(Parser *this) {
     free(this);
 }
 
+static inline void parser_error(Lexer *lexer, const char *expected) {
+    fprintf(stderr, "Parse error. Position: %d. Expected: %s. Found: '%c' (%d)\n",
+            lexer->pos, expected, token_type(lexer->peek), token_type(lexer->peek));
+}
+
 double parser_next_atom(Parser *this);
 
 double parser_handle_variable(Parser *this) {
@@ -77,8 +82,7 @@ double parser_handle_variable(Parser *this) {
     return result;
 
 fail:
-    fprintf(stderr, "Parse error. Position: %d. Expected: TOKT_VARIABLE. Found: '%c' (%d)\n",
-            this->lexer->pos, token_type(peek), token_type(peek));
+    parser_error(this->lexer, "TOKT_VARIABLE");
     exit(-1);
 }
 
@@ -105,8 +109,7 @@ double parser_next_atom(Parser *this) {
         break;
     }
 
-    fprintf(stderr, "Parse error. Position: %d. Expected: TOKT_NUMBER. Found: '%c' (%d)\n",
-            this->lexer->pos, token_type(peek), token_type(peek));
+    parser_error(this->lexer, "TOKT_NUMBER");
     exit(-1);
 }
 
@@ -155,8 +158,7 @@ double parser_next_expr(Parser *this) {
     return left;
 
 fail:
-    fprintf(stderr, "Parse error. Position: %d. Expected: TOKT_NEWLINE. Found: '%c' (%d)\n",
-            this->lexer->pos, token_type(peek), token_type(peek));
+    parser_error(this->lexer, "TOKT_NEWLINE");
     exit(-1);
 }
 
