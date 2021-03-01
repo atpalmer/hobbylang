@@ -38,6 +38,7 @@ void test_lexer() {
 
 void test_parser() {
     Parser *parser = parser_new(
+            "42\n"
             "x = 3\n"
             "-2 + x * 2 + 5 - 1\n"
             "alfa = 1\n"

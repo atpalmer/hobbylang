@@ -144,20 +144,13 @@ double parser_next_expr(Parser *this) {
     case TOKT_SUB:
         lexer_consume_peek(this->lexer);
         return left - parser_next_expr(this);
+    case TOKT_NEWLINE:
+        lexer_consume_peek(this->lexer);
+        return left;
     default:
         break;
     }
 
-    peek = lexer_peek(this->lexer);
-
-    if(token_type(peek) != TOKT_NEWLINE)
-        goto fail;
-
-    lexer_consume_peek(this->lexer);
-
-    return left;
-
-fail:
     parser_error(this->lexer, "TOKT_NEWLINE");
     exit(-1);
 }
