@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "parser.h"
@@ -23,13 +24,17 @@ int line_read(struct line *this, FILE *fp) {
     return getline(&this->buff, &this->size, fp);
 }
 
-int main(void) {
+int main(int argc, const char **argv) {
+    FILE *fp = argc < 2 ? stdin : fopen(argv[1], "r");
+    if(!fp)
+        goto fail;
     struct line *line = line_new();
     Parser *parser = parser_new("");
 
     for(;;) {
-        printf(">>> ");
-        if(line_read(line, stdin) < 0)
+        if(fp == stdin)
+            printf(">>> ");
+        if(line_read(line, fp) < 0)
             break;
         parser_continue(parser, line->buff);
         double value = parser_next_line(parser);
@@ -39,4 +44,11 @@ int main(void) {
     printf("\n");
     parser_free(parser);
     line_free(line);
+    if(fp != stdin)
+        fclose(fp);
+    return 0;
+
+fail:
+    perror("Error");
+    return -1;
 }

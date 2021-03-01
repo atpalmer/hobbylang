@@ -1,0 +1,8 @@
+42
+x = 2 + 1
+-2 + x * 2 + 5 - 1
+-2 + x * (2 + 5) - 1
+alfa = 1
+bravo = 7
+alfa = 5
+alfa * bravo
