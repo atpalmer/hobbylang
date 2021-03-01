@@ -50,6 +50,7 @@ static int _is_literal(char c) {
         TOKT_SUB,
         TOKT_MULT,
         TOKT_DIV,
+        TOKT_MOD,
         TOKT_EQ,
         TOKT_LPAREN,
         TOKT_RPAREN,

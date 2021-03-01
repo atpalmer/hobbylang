@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "common.h"
 #include "lexer.h"
 #include "parser.h"
@@ -142,6 +143,9 @@ double parser_next_term(Parser *this) {
     case TOKT_DIV:
         lexer_consume_peek(this->lexer);
         return left / parser_next_term(this);
+    case TOKT_MOD:
+        lexer_consume_peek(this->lexer);
+        return fmod(left, parser_next_term(this));
     default:
         break;
     }
