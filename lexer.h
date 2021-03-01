@@ -13,7 +13,7 @@ enum token_type {
     TOKT_LPAREN = '(',
     TOKT_RPAREN = ')',
     TOKT_NUMBER = -1,
-    TOKT_VARIABLE = -2,
+    TOKT_IDENTIFIER = -2,
 };
 
 typedef struct {

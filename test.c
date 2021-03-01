@@ -48,7 +48,7 @@ void test_lexer(void) {
 
     printf("PROGRAM:\n%s\n", lexer->data);
 
-    assert_equal_char(token_type(lexer_peek(lexer)), TOKT_VARIABLE);
+    assert_equal_char(token_type(lexer_peek(lexer)), TOKT_IDENTIFIER);
     assert_equal_string(token_varname(lexer_peek(lexer)), "x");
     lexer_consume_peek(lexer);
 
@@ -62,7 +62,7 @@ void test_lexer(void) {
     assert_equal_char(token_type(lexer_peek(lexer)), TOKT_NEWLINE);
     lexer_consume_peek(lexer);
 
-    assert_equal_char(token_type(lexer_peek(lexer)), TOKT_VARIABLE);
+    assert_equal_char(token_type(lexer_peek(lexer)), TOKT_IDENTIFIER);
     assert_equal_string(token_varname(lexer_peek(lexer)), "x");
     lexer_consume_peek(lexer);
 

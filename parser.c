@@ -66,7 +66,7 @@ double parser_next_expr(Parser *this);
 double parser_handle_variable(Parser *this) {
     Token *peek = lexer_peek(this->lexer);
 
-    if(token_type(peek) != TOKT_VARIABLE)
+    if(token_type(peek) != TOKT_IDENTIFIER)
         goto fail;
 
     char *key = strdup(token_varname(peek));
@@ -88,7 +88,7 @@ double parser_handle_variable(Parser *this) {
     return result;
 
 fail:
-    parser_error(this->lexer, "TOKT_VARIABLE");
+    parser_error(this->lexer, "TOKT_IDENTIFIER");
     exit(-1);
 }
 
@@ -119,7 +119,7 @@ double parser_next_atom(Parser *this) {
             lexer_consume_peek(this->lexer);
             return result;
         }
-    case TOKT_VARIABLE:
+    case TOKT_IDENTIFIER:
         {
             return parser_handle_variable(this);
         }

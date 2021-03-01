@@ -70,7 +70,7 @@ static int _read_val(const char *data, double *result) {
     return valp - valstr;
 }
 
-static int _read_varname(const char *data, char *buff, int bufflen) {
+static int _read_identifier(const char *data, char *buff, int bufflen) {
     char *valp = buff;
     while(_is_alpha(*data)) {
         *(valp++) = *data++;
@@ -101,8 +101,8 @@ static Token *token_new_numeric(const char *data) {
 
 static Token *token_new_varname(const char *data) {
     VarNameToken *new = malloc(sizeof *new + 32 * sizeof(*new->value));
-    int bytes_read = _read_varname(data, new->value, 32);
-    token_base_init(&new->base, TOKT_VARIABLE, bytes_read);
+    int bytes_read = _read_identifier(data, new->value, 32);
+    token_base_init(&new->base, TOKT_IDENTIFIER, bytes_read);
     return (Token *)new;
 }
 
