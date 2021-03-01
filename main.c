@@ -37,7 +37,7 @@ void test_lexer() {
 }
 
 void test_parser() {
-    Parser *parser = parser_new(
+    static const char *PROGRAM =
             "42\n"
             "x = 3\n"
             "-2 + x * 2 + 5 - 1\n"
@@ -45,7 +45,10 @@ void test_parser() {
             "alfa = 1\n"
             "bravo = 7\n"
             "alfa = 5\n"
-            "alfa * bravo\n");
+            "alfa * bravo\n"
+            ;
+
+    Parser *parser = parser_new(PROGRAM);
 
     while(parser_has_next(parser)) {
         double val = parser_next_line(parser);
