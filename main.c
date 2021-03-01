@@ -57,7 +57,7 @@ void test_lexer() {
     lexer_free(lexer);
 }
 
-void test_parser() {
+void test_parser(void) {
     static const char *PROGRAM =
             "42\n"
             "x = 3\n"
