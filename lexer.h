@@ -3,7 +3,6 @@
 
 enum token_type {
     TOKT_NULL = 0,
-    TOKT_PRINT = ';',
     TOKT_ADD = '+',
     TOKT_SUB = '-',
     TOKT_MULT = '*',

@@ -45,7 +45,6 @@ static int _is_eof(char c) {
 
 static int _is_literal(char c) {
     static const char VALID[] = {
-        TOKT_PRINT,
         TOKT_ADD,
         TOKT_SUB,
         TOKT_MULT,
