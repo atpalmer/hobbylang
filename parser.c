@@ -56,6 +56,7 @@ static inline void parser_error(Lexer *lexer, const char *expected) {
 }
 
 double parser_next_atom(Parser *this);
+double parser_next_expr(Parser *this);
 
 double parser_handle_variable(Parser *this) {
     Token *peek = lexer_peek(this->lexer);
@@ -101,6 +102,18 @@ double parser_next_atom(Parser *this) {
             lexer_consume_peek(this->lexer);
             return -parser_next_atom(this);
         }
+    case TOKT_LPAREN:
+        {
+            lexer_consume_peek(this->lexer);
+            double result = parser_next_expr(this);
+            Token *rparen = lexer_peek(this->lexer);
+            if(token_type(rparen) != TOKT_RPAREN) {
+                parser_error(this->lexer, "TOKT_RPAREN");
+                exit(-1);
+            }
+            lexer_consume_peek(this->lexer);
+            return result;
+        }
     case TOKT_VARIABLE:
         {
             return parser_handle_variable(this);
@@ -144,13 +157,25 @@ double parser_next_expr(Parser *this) {
     case TOKT_SUB:
         lexer_consume_peek(this->lexer);
         return left - parser_next_expr(this);
-    case TOKT_NEWLINE:
-        lexer_consume_peek(this->lexer);
-        return left;
     default:
         break;
     }
 
+    return left;
+}
+
+double parser_next_line(Parser *this) {
+    double result = parser_next_expr(this);
+
+    Token *peek = lexer_peek(this->lexer);
+
+    if(token_type(peek) != TOKT_NEWLINE)
+        goto fail;
+
+    lexer_consume_peek(this->lexer);
+    return result;
+
+fail:
     parser_error(this->lexer, "TOKT_NEWLINE");
     exit(-1);
 }

@@ -41,13 +41,14 @@ void test_parser() {
             "42\n"
             "x = 3\n"
             "-2 + x * 2 + 5 - 1\n"
+            "-2 + x * (2 + 5) - 1\n"
             "alfa = 1\n"
             "bravo = 7\n"
             "alfa = 5\n"
             "alfa * bravo\n");
 
     while(parser_has_next(parser)) {
-        double val = parser_next_expr(parser);
+        double val = parser_next_line(parser);
         printf("Result: %f\n", val);
     }
 
