@@ -50,6 +50,38 @@ void parser_free(Parser *this) {
     free(this);
 }
 
+double parser_next_atom(Parser *this);
+
+double parser_handle_variable(Parser *this) {
+    Token *peek = lexer_peek(this->lexer);
+
+    if(token_type(peek) != TOKT_VARIABLE)
+        goto fail;
+
+    char *key = strdup(token_varname(peek));
+    lexer_consume_peek(this->lexer);
+
+    peek = lexer_peek(this->lexer);
+
+    double result = 0.0;
+
+    if(token_type(peek) == TOKT_EQ) {
+        lexer_consume_peek(this->lexer);
+        result = parser_next_atom(this);
+        varmap_setval(&this->varmap, key, result);
+    } else {
+        result = varmap_getval(this->varmap, key, 0.0);
+    }
+
+    free(key);
+    return result;
+
+fail:
+    fprintf(stderr, "Parse error. Position: %d. Expected: TOKT_VARIABLE. Found: '%c' (%d)\n",
+            this->lexer->pos, token_type(peek), token_type(peek));
+    exit(-1);
+}
+
 double parser_next_atom(Parser *this) {
     Token *peek = lexer_peek(this->lexer);
 
@@ -64,6 +96,10 @@ double parser_next_atom(Parser *this) {
         {
             lexer_consume_peek(this->lexer);
             return -parser_next_atom(this);
+        }
+    case TOKT_VARIABLE:
+        {
+            return parser_handle_variable(this);
         }
     default:
         break;
