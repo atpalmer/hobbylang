@@ -23,7 +23,7 @@ static void assert_false(int val) {
         fprintf(stderr, "ERROR: %d is true\n", val);
 }
 
-void test_lexer() {
+void test_lexer(void) {
     static const char *PROGRAM =
         "x = 2.0\n"
         "x * 1.5 + (123 - 456)\n"
