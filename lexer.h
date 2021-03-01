@@ -2,7 +2,7 @@
 #define LEXER_H
 
 enum token_type {
-    TOKT_END = 0,
+    TOKT_NULL = 0,
     TOKT_PRINT = ';',
     TOKT_ADD = '+',
     TOKT_SUB = '-',
@@ -44,7 +44,7 @@ Token *lexer_peek(Lexer *this);
 void lexer_handle_next(Lexer *this);
 
 static inline enum token_type token_type(Token *this) {
-    return this->type;
+    return this ? this->type : TOKT_NULL;
 }
 
 static inline double token_number(Token *this) {
