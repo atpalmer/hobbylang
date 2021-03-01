@@ -17,6 +17,7 @@ enum token_type {
 
 typedef struct {
     enum token_type type;
+    int bytes_read;
 } Token;
 
 typedef struct {
