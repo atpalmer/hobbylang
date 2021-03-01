@@ -25,7 +25,7 @@ void lexer_free(Lexer *this) {
 }
 
 static int _is_whitespace(char c) {
-    static const char VALID[] = " \t\r\n";
+    static const char VALID[] = " \t";
     return BOOL(memchr(VALID, c, strlen(VALID)));
 }
 
@@ -45,6 +45,7 @@ static int _is_eof(char c) {
 
 static int _is_literal(char c) {
     static const char VALID[] = {
+        TOKT_NEWLINE,
         TOKT_ADD,
         TOKT_SUB,
         TOKT_MULT,

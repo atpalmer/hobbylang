@@ -145,7 +145,19 @@ double parser_next_expr(Parser *this) {
         break;
     }
 
+    peek = lexer_peek(this->lexer);
+
+    if(token_type(peek) != TOKT_NEWLINE)
+        goto fail;
+
+    lexer_consume_peek(this->lexer);
+
     return left;
+
+fail:
+    fprintf(stderr, "Parse error. Position: %d. Expected: TOKT_NEWLINE. Found: '%c' (%d)\n",
+            this->lexer->pos, token_type(peek), token_type(peek));
+    exit(-1);
 }
 
 int parser_has_next(Parser *this) {
