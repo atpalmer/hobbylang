@@ -7,18 +7,31 @@ struct line {
     char *buff;
 };
 
-int main(void) {
-    struct line line = {
-        .size = 128,
-        .buff = malloc(sizeof(char) * 128),
-    };
-    printf(">>> ");
-    getline(&line.buff, &line.size, stdin);
+struct line *line_new(void) {
+    struct line *new = malloc(sizeof *new);
+    new->size = 128;
+    new->buff = malloc(sizeof *new->buff * new->size);
+    return new;
+}
 
-    Parser *parser = parser_new(line.buff);
+void line_free(struct line *this) {
+    free(this->buff);
+    free(this);
+}
+
+void line_read(struct line *this, FILE *fp) {
+    getline(&this->buff, &this->size, fp);
+}
+
+int main(void) {
+    struct line *line = line_new();
+    printf(">>> ");
+    line_read(line, stdin);
+
+    Parser *parser = parser_new(line->buff);
     double value = parser_next_line(parser);
     printf("%f\n", value);
     parser_free(parser);
 
-    free(line.buff);
+    line_free(line);
 }
