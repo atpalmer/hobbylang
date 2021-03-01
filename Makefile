@@ -17,7 +17,7 @@ test: clean $(OBJECTS) $(TEST_OBJECTS)
 clean:
 	-rm $(OBJECTS) $(TEST_OBJECTS) $(TESTP) $P
 
-all: clean $P
+all: clean $P test
 
 run: all
 	"./$P"
