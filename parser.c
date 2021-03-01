@@ -57,16 +57,14 @@ double parser_next_atom(Parser *this) {
 
     switch(token_type(curr)) {
     case TOKT_NUMBER:
-        lexer_handle(this->lexer, curr);
+        lexer_handle_next(this->lexer);
         return token_number(curr);
     case TOKT_SUB:
-        lexer_handle(this->lexer, curr);
+        lexer_handle_next(this->lexer);
         return -parser_next_atom(this);
     default:
         break;
     }
-
-    token_free(&curr);
 
     fprintf(stderr, "Parse error. Position: %d. Expected: TOKT_NUMBER. Found: '%c' (%d)\n",
             this->lexer->pos, token_type(curr), token_type(curr));
@@ -87,18 +85,16 @@ double parser_next_term(Parser *this) {
 
     switch(token_type(op)) {
     case TOKT_MULT:
-        lexer_handle(this->lexer, op);
+        lexer_handle_next(this->lexer);
         result *= parser_next_term(this);
         break;
     case TOKT_DIV:
-        lexer_handle(this->lexer, op);
+        lexer_handle_next(this->lexer);
         result /= parser_next_term(this);
         break;
     default:
         break;
     }
-
-    token_free(&op);
 
 done:
     return result;
@@ -113,18 +109,16 @@ double parser_next_expr(Parser *this) {
 
     switch(token_type(op)) {
     case TOKT_ADD:
-        lexer_handle(this->lexer, op);
+        lexer_handle_next(this->lexer);
         result += parser_next_expr(this);
         break;
     case TOKT_SUB:
-        lexer_handle(this->lexer, op);
+        lexer_handle_next(this->lexer);
         result -= parser_next_expr(this);
         break;
     default:
         break;
     }
-
-    token_free(&op);
 
 done:
     return result;

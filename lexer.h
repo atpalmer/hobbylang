@@ -34,19 +34,18 @@ typedef struct {
     const char *data;
     int len;
     int pos;
+    Token *peek;
 } Lexer;
 
 
 Lexer *lexer_new(const char *data);
 void lexer_free(Lexer *this);
 Token *lexer_peek(Lexer *this);
-void lexer_handle(Lexer *this, Token *token);
+void lexer_handle_next(Lexer *this);
 
 static inline int lexer_has_next(Lexer *this) {
     return this->pos < this->len;
 }
-
-void token_free(Token **this);
 
 static inline enum token_type token_type(Token *this) {
     return this->type;

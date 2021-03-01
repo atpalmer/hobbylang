@@ -19,19 +19,18 @@ void test_lexer() {
 
         switch(token_type(token)) {
         case TOKT_NUMBER:
-            lexer_handle(lexer, token);
+            lexer_handle_next(lexer);
             printf("number: %f\n", token_number(token));
             break;
         case TOKT_VARIABLE:
-            lexer_handle(lexer, token);
+            lexer_handle_next(lexer);
             printf("variable: \"%s\"\n", token_varname(token));
             break;
         default:
-            lexer_handle(lexer, token);
+            lexer_handle_next(lexer);
             printf("Type: %c (%d)\n", token_type(token), token_type(token));
             break;
         }
-        token_free(&token);
     }
 
     lexer_free(lexer);

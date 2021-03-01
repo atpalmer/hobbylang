@@ -9,10 +9,18 @@ Lexer *lexer_new(const char *data) {
     new->data = data;
     new->len = strlen(data);
     new->pos = 0;
+    new->peek = NULL;
     return new;
 }
 
+void _token_free(Token **this) {
+    if(*this)
+        free(*this);
+    *this = NULL;
+}
+
 void lexer_free(Lexer *this) {
+    _token_free(&this->peek);
     free(this);
 }
 
@@ -97,16 +105,7 @@ static Token *token_new_varname(Lexer *lexer) {
     return (Token *)new;
 }
 
-void token_free(Token **this) {
-    if(*this)
-        free(*this);
-    *this = NULL;
-}
-
-Token *lexer_next(Lexer *this) {
-    if(!lexer_has_next(this))
-        return NULL;
-
+static Token *_lexer_next(Lexer *this) {
     while(_is_whitespace(this->data[this->pos]))
         ++this->pos;
 
@@ -126,18 +125,33 @@ Token *lexer_next(Lexer *this) {
 }
 
 Token *lexer_peek(Lexer *this) {
+    if(this->peek)
+        return this->peek;
+
+    _token_free(&this->peek);
+
+    if(this->pos >= this->len)
+        return NULL;
+
     Lexer tmp = {
         .data = this->data,
         .len = this->len,
         .pos = this->pos,
+        .peek = NULL,
     };
 
-    return lexer_next(&tmp);
+    this->peek = _lexer_next(&tmp);
+    return this->peek;
 }
 
-void lexer_handle(Lexer *this, Token *token) {
+void lexer_handle_next(Lexer *this) {
+    if(!this->peek)
+        return;
+
     while(_is_whitespace(this->data[this->pos]))
         ++this->pos;
 
-    this->pos += token->bytes_read;
+    this->pos += this->peek->bytes_read;
+
+    _token_free(&this->peek);
 }
