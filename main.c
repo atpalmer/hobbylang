@@ -19,19 +19,24 @@ void line_free(struct line *this) {
     free(this);
 }
 
-void line_read(struct line *this, FILE *fp) {
-    getline(&this->buff, &this->size, fp);
+int line_read(struct line *this, FILE *fp) {
+    return getline(&this->buff, &this->size, fp);
 }
 
 int main(void) {
     struct line *line = line_new();
-    printf(">>> ");
-    line_read(line, stdin);
+    Parser *parser = parser_new("");
 
-    Parser *parser = parser_new(line->buff);
-    double value = parser_next_line(parser);
-    printf("%f\n", value);
+    for(;;) {
+        printf(">>> ");
+        if(line_read(line, stdin) < 0)
+            break;
+        parser_continue(parser, line->buff);
+        double value = parser_next_line(parser);
+        printf("%f\n", value);
+    }
+
+    printf("\n");
     parser_free(parser);
-
     line_free(line);
 }

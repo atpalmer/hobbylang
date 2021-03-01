@@ -40,6 +40,11 @@ Parser *parser_new(const char *program) {
     return new;
 }
 
+void parser_continue(Parser *this, const char *program) {
+    free(this->lexer);
+    this->lexer = lexer_new(program);
+}
+
 void parser_free(Parser *this) {
     free(this->lexer);
     VarEntry *entry = this->varmap;

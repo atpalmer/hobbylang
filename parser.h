@@ -15,6 +15,7 @@ typedef struct {
 } Parser;
 
 Parser *parser_new(const char *program);
+void parser_continue(Parser *this, const char *program);
 void parser_free(Parser *this);
 int parser_has_next(Parser *this);
 double parser_next_line(Parser *this);
