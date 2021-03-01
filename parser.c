@@ -70,45 +70,41 @@ double parser_next_atom(Parser *this) {
 }
 
 double parser_next_term(Parser *this) {
-    double result = parser_next_atom(this);
+    double left = parser_next_atom(this);
 
     Token *op = lexer_peek(this->lexer);
 
     switch(token_type(op)) {
     case TOKT_MULT:
         lexer_handle_next(this->lexer);
-        result *= parser_next_term(this);
-        break;
+        return left * parser_next_term(this);
     case TOKT_DIV:
         lexer_handle_next(this->lexer);
-        result /= parser_next_term(this);
-        break;
+        return left / parser_next_term(this);
     default:
         break;
     }
 
-    return result;
+    return left;
 }
 
 double parser_next_expr(Parser *this) {
-    double result = parser_next_term(this);
+    double left = parser_next_term(this);
 
     Token *op = lexer_peek(this->lexer);
 
     switch(token_type(op)) {
     case TOKT_ADD:
         lexer_handle_next(this->lexer);
-        result += parser_next_expr(this);
-        break;
+        return left + parser_next_expr(this);
     case TOKT_SUB:
         lexer_handle_next(this->lexer);
-        result -= parser_next_expr(this);
-        break;
+        return left - parser_next_expr(this);
     default:
         break;
     }
 
-    return result;
+    return left;
 }
 
 int parser_has_next(Parser *this) {
