@@ -132,3 +132,10 @@ Token *lexer_peek(Lexer *this) {
 
     return lexer_next(&tmp);
 }
+
+void lexer_handle(Lexer *this, Token *token) {
+    while(_is_whitespace(this->data[this->pos]))
+        ++this->pos;
+
+    this->pos += token->bytes_read;
+}

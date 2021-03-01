@@ -42,6 +42,7 @@ Lexer *lexer_new(const char *data);
 void lexer_free(Lexer *this);
 Token *lexer_next(Lexer *this);
 Token *lexer_peek(Lexer *this);
+void lexer_handle(Lexer *this, Token *token);
 
 static inline int lexer_has_next(Lexer *this) {
     return this->pos < this->len;

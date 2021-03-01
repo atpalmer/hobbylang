@@ -51,18 +51,29 @@ void parser_free(Parser *this) {
 }
 
 double parser_next_atom(Parser *this) {
-    Token *curr = lexer_next(this->lexer);
+    Token *curr = lexer_peek(this->lexer);
+    if(!curr)
+        goto done;
 
     switch(token_type(curr)) {
     case TOKT_NUMBER:
+        lexer_handle(this->lexer, curr);
         return token_number(curr);
     case TOKT_SUB:
+        lexer_handle(this->lexer, curr);
         return -parser_next_atom(this);
     default:
         break;
     }
 
+    token_free(&curr);
+
     fprintf(stderr, "Parse error. Position: %d. Expected: TOKT_NUMBER. Found: '%c' (%d)\n",
+            this->lexer->pos, token_type(curr), token_type(curr));
+    exit(-1);
+
+done:
+    fprintf(stderr, "Parse error. Position: %d. Expected: TOKT_NUMBER. Found: EOF\n",
             this->lexer->pos, token_type(curr), token_type(curr));
     exit(-1);
 }
@@ -76,11 +87,11 @@ double parser_next_term(Parser *this) {
 
     switch(token_type(op)) {
     case TOKT_MULT:
-        lexer_next(this->lexer);
+        lexer_handle(this->lexer, op);
         result *= parser_next_term(this);
         break;
     case TOKT_DIV:
-        lexer_next(this->lexer);
+        lexer_handle(this->lexer, op);
         result /= parser_next_term(this);
         break;
     default:
@@ -102,11 +113,11 @@ double parser_next_expr(Parser *this) {
 
     switch(token_type(op)) {
     case TOKT_ADD:
-        lexer_next(this->lexer);
+        lexer_handle(this->lexer, op);
         result += parser_next_expr(this);
         break;
     case TOKT_SUB:
-        lexer_next(this->lexer);
+        lexer_handle(this->lexer, op);
         result -= parser_next_expr(this);
         break;
     default:
