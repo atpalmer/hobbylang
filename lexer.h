@@ -43,10 +43,6 @@ void lexer_free(Lexer *this);
 Token *lexer_peek(Lexer *this);
 void lexer_handle_next(Lexer *this);
 
-static inline int lexer_has_next(Lexer *this) {
-    return this->pos < this->len;
-}
-
 static inline enum token_type token_type(Token *this) {
     return this->type;
 }

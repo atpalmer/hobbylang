@@ -125,5 +125,5 @@ done:
 }
 
 int parser_has_next(Parser *this) {
-    return lexer_has_next(this->lexer);
+    return lexer_peek(this->lexer) != NULL;
 }
