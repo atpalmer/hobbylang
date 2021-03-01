@@ -12,14 +12,26 @@ void test_lexer() {
 
     printf("PROGRAM:\n%s\n", lexer->data);
 
-    while(lexer_next(lexer)) {
-        Token *token = lexer_curr(lexer);
-        if(token->type == TOKT_NUMBER)
-            printf("number: %f\n", ((NumericToken *)token)->value);
-        else if(token->type == TOKT_VARIABLE)
-            printf("variable: \"%s\"\n", ((VarNameToken *)token)->value);
-        else
-            printf("Type: %c (%d)\n", token->type, token->type);
+    for(;;) {
+        Token *token = lexer_peek(lexer);
+        if(!token)
+            break;
+
+        switch(token_type(token)) {
+        case TOKT_NUMBER:
+            lexer_handle(lexer, token);
+            printf("number: %f\n", token_number(token));
+            break;
+        case TOKT_VARIABLE:
+            lexer_handle(lexer, token);
+            printf("variable: \"%s\"\n", token_varname(token));
+            break;
+        default:
+            lexer_handle(lexer, token);
+            printf("Type: %c (%d)\n", token_type(token), token_type(token));
+            break;
+        }
+        token_free(&token);
     }
 
     lexer_free(lexer);
