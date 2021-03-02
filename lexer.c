@@ -27,7 +27,7 @@ fail:
 const char *token_varname(Token *this) {
     if(token_type(this) != TOKT_IDENTIFIER)
         goto fail;
-    return ((VarNameToken *)this)->value;
+    return ((IdentifierToken *)this)->value;
 
 fail:
     token_type_error(this, "TOKT_IDENTIFIER");
@@ -142,7 +142,7 @@ fail:
 }
 
 static Token *token_new_varname(const char *data) {
-    VarNameToken *new = malloc(sizeof *new + 32 * sizeof(*new->value));
+    IdentifierToken *new = malloc(sizeof *new + 32 * sizeof(*new->value));
     if(!new)
         goto fail;
     int bytes_read = _read_identifier(data, new->value, 32);

@@ -24,7 +24,7 @@ typedef struct {
 typedef struct {
     Token base;
     char value[];
-} VarNameToken;
+} IdentifierToken;
 
 typedef struct {
     Token base;
