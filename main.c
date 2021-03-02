@@ -10,8 +10,12 @@ struct line {
 
 struct line *line_new(void) {
     struct line *new = malloc(sizeof *new);
+    error_ensure_errno_ok();
+
     new->size = 128;
     new->buff = malloc(sizeof *new->buff * new->size);
+    error_ensure_errno_ok();
+
     return new;
 }
 
