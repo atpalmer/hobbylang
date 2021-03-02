@@ -44,16 +44,8 @@ void lexer_free(Lexer *this);
 Token *lexer_peek(Lexer *this);
 void lexer_consume_peek(Lexer *this);
 
-static inline TokenType token_type(Token *this) {
-    return this ? this->type : TOKT_NULL;
-}
-
-static inline double token_number(Token *this) {
-    return ((NumericToken *)this)->value;
-}
-
-static inline const char *token_varname(Token *this) {
-    return ((VarNameToken *)this)->value;
-}
+TokenType token_type(Token *this);
+double token_number(Token *this);
+const char *token_varname(Token *this);
 
 #endif

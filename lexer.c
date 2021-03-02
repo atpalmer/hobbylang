@@ -5,6 +5,18 @@
 #include "common.h"
 #include "lexer.h"
 
+TokenType token_type(Token *this) {
+    return this ? this->type : TOKT_NULL;
+}
+
+double token_number(Token *this) {
+    return ((NumericToken *)this)->value;
+}
+
+const char *token_varname(Token *this) {
+    return ((VarNameToken *)this)->value;
+}
+
 Lexer *lexer_new(const char *data) {
     Lexer *new = malloc(sizeof *new);
     if(!new)
