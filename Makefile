@@ -12,7 +12,7 @@ test: clean $(OBJECTS) $(TEST_OBJECTS)
 	$(CC) -o $(TESTP) $(OBJECTS) $(TEST_OBJECTS)
 	"./$(TESTP)"
 
-.PHONY: clean all run
+.PHONY: clean all run install
 
 clean:
 	-rm $(OBJECTS) $(TEST_OBJECTS) $(TESTP) $P
@@ -21,3 +21,6 @@ all: clean $P test
 
 run: all
 	"./$P"
+
+install: all
+	mv ./calc /usr/local/bin
