@@ -66,15 +66,9 @@ static int _is_literal(char c) {
 }
 
 static int _read_val(const char *data, double *result) {
-    char valstr[32] = {0};
-    char *valp = valstr;
-    while(_is_numeric(*data)) {
-        *(valp++) = *data++;
-        if(valp - valstr >= 32)
-            break;
-    }
-    *result = atof(valstr);
-    return valp - valstr;
+    const char *p = data;
+    *result = strtod(data, (void *)&p);
+    return p - data;
 }
 
 static int _read_identifier(const char *data, char *buff, int bufflen) {
