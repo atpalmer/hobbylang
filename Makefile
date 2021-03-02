@@ -20,7 +20,7 @@ clean:
 all: clean $P test
 
 run: all
-	"./$P"
+	"./$P" "samples/sample3.calc"
 
 install: all
 	mv ./calc /usr/local/bin
