@@ -64,16 +64,17 @@ fail:
 }
 
 void parser_set_buff(Parser *this, const char *program) {
-    free(this->lexer);
+    lexer_free(this->lexer);
     this->lexer = lexer_new(program);
 }
 
 void parser_free(Parser *this) {
-    free(this->lexer);
+    lexer_free(this->lexer);
     VarEntry *entry = this->varmap;
     while(entry) {
+        VarEntry *next = entry->next;
         free(entry);
-        entry = entry->next;
+        entry = next;
     }
     free(this);
 }
