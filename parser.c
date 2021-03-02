@@ -152,22 +152,14 @@ double parser_next_atom(Parser *this) {
 
     switch(token_type(peek)) {
     case TOKT_NUMBER:
-        {
-            return parser_next_number(this);
-        }
+        return parser_next_number(this);
     case TOKT_SUB:
-        {
-            lexer_consume_peek(this->lexer);
-            return -parser_next_atom(this);
-        }
+        lexer_consume_peek(this->lexer);
+        return -parser_next_atom(this);
     case TOKT_LPAREN:
-        {
-            return parser_handle_parens(this);
-        }
+        return parser_handle_parens(this);
     case TOKT_IDENTIFIER:
-        {
-            return parser_handle_variable(this);
-        }
+        return parser_handle_variable(this);
     default:
         break;
     }
