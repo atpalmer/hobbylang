@@ -45,4 +45,5 @@ Run `calc [path]`. For example, to run `/samples/sample1.calc`, run `./calc ./sa
 
 To run in interactive mode, simply run `calc` with no arguments.
 
+Enter `Ctrl+D` to exit.
 
