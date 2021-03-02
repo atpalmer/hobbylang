@@ -52,5 +52,5 @@ int main(int argc, const char **argv) {
 
 fail:
     perror("Error");
-    return -1;
+    return errno;
 }
