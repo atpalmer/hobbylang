@@ -133,15 +133,27 @@ double parser_handle_parens(Parser *this) {
     return result;
 }
 
+double parser_next_number(Parser *this) {
+    Token *peek = lexer_peek(this->lexer);
+    if(token_type(peek) != TOKT_NUMBER)
+        goto fail;
+
+    double result = token_number(peek);
+    lexer_consume_peek(this->lexer);
+    return result;
+
+fail:
+    parser_error(this->lexer, "TOKT_NUMBER");
+    exit(-1);
+}
+
 double parser_next_atom(Parser *this) {
     Token *peek = lexer_peek(this->lexer);
 
     switch(token_type(peek)) {
     case TOKT_NUMBER:
         {
-            double result = token_number(peek);
-            lexer_consume_peek(this->lexer);
-            return result;
+            return parser_next_number(this);
         }
     case TOKT_SUB:
         {
