@@ -15,7 +15,7 @@ test: clean $(OBJECTS) $(TEST_OBJECTS)
 .PHONY: clean all run install
 
 clean:
-	-rm $(OBJECTS) $(TEST_OBJECTS) $(TESTP) $P
+	-rm $(OBJECTS) $(MAIN_OBJECTS) $(TEST_OBJECTS) $(TESTP) $P
 
 all: clean $P test
 
