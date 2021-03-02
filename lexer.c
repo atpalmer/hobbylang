@@ -9,12 +9,29 @@ TokenType token_type(Token *this) {
     return this ? this->type : TOKT_NULL;
 }
 
+void token_type_error(Token *token, const char *expected) {
+    fprintf(stderr, "Token must be %s. Received: %d\n",
+        expected, token_type(token));
+}
+
 double token_number(Token *this) {
+    if(token_type(this) != TOKT_NUMBER)
+        goto fail;
     return ((NumericToken *)this)->value;
+
+fail:
+    token_type_error(this, "TOKT_NUMBER");
+    exit(-1);
 }
 
 const char *token_varname(Token *this) {
+    if(token_type(this) != TOKT_IDENTIFIER)
+        goto fail;
     return ((VarNameToken *)this)->value;
+
+fail:
+    token_type_error(this, "TOKT_IDENTIFIER");
+    exit(-1);
 }
 
 Lexer *lexer_new(const char *data) {
