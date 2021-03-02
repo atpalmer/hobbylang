@@ -60,7 +60,7 @@ void parser_free(Parser *this) {
 
 static inline void parser_error(Lexer *lexer, const char *expected) {
     fprintf(stderr, "Parse error. Position: %d. Expected: %s. Found: '%c' (%d)\n",
-            lexer->pos, expected, token_type(lexer->peek), token_type(lexer->peek));
+        lexer->pos, expected, token_type(lexer->peek), token_type(lexer->peek));
 }
 
 double parser_next_expr(Parser *this);
