@@ -65,7 +65,7 @@ static int _is_literal(char c) {
     return BOOL(memchr(VALID, c, sizeof VALID / sizeof *VALID));
 }
 
-static int _read_val(const char *data, double *result) {
+static int _read_double(const char *data, double *result) {
     const char *p = data;
     *result = strtod(data, (void *)&p);
     return p - data;
@@ -103,7 +103,7 @@ static Token *token_new_numeric(const char *data) {
     NumericToken *new = malloc(sizeof *new);
     if(!new)
         goto fail;
-    int bytes_read = _read_val(data, &new->value);
+    int bytes_read = _read_double(data, &new->value);
     token_base_init(&new->base, TOKT_NUMBER, bytes_read);
     return (Token *)new;
 
