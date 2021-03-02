@@ -1,7 +1,7 @@
-#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "error.h"
 #include "common.h"
 #include "lexer.h"
 
@@ -36,17 +36,13 @@ fail:
 
 Lexer *lexer_new(const char *data) {
     Lexer *new = malloc(sizeof *new);
-    if(!new)
-        goto fail;
+    error_ensure_errno_ok();
+
     new->data = data;
     new->len = strlen(data);
     new->pos = 0;
     new->peek = NULL;
     return new;
-
-fail:
-    perror("Error");
-    exit(errno);
 }
 
 void _token_free(Token **this) {
@@ -118,40 +114,28 @@ static void token_base_init(Token *base, TokenType type, int bytes_read) {
 
 static Token *token_new_literal(const char *data) {
     Token *new = malloc(sizeof *new);
-    if(!new)
-        goto fail;
+    error_ensure_errno_ok();
+
     token_base_init(new, *data, 1);
     return new;
-
-fail:
-    perror("Error");
-    exit(errno);
 }
 
 static Token *token_new_numeric(const char *data) {
     NumericToken *new = malloc(sizeof *new);
-    if(!new)
-        goto fail;
+    error_ensure_errno_ok();
+
     int bytes_read = _read_double(data, &new->value);
     token_base_init(&new->base, TOKT_NUMBER, bytes_read);
     return (Token *)new;
-
-fail:
-    perror("Error");
-    exit(errno);
 }
 
 static Token *token_new_varname(const char *data) {
     IdentifierToken *new = malloc(sizeof *new + 32 * sizeof(*new->value));
-    if(!new)
-        goto fail;
+    error_ensure_errno_ok();
+
     int bytes_read = _read_identifier(data, new->value, 32);
     token_base_init(&new->base, TOKT_IDENTIFIER, bytes_read);
     return (Token *)new;
-
-fail:
-    perror("Error");
-    exit(errno);
 }
 
 static Token *_peek(const char *data) {
