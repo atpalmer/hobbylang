@@ -115,6 +115,24 @@ fail:
     exit(-1);
 }
 
+double parser_handle_parens(Parser *this) {
+    Token *lparen = lexer_peek(this->lexer);
+    if(token_type(lparen) != TOKT_LPAREN) {
+        parser_error(this->lexer, "TOKT_LPAREN");
+        exit(-1);
+    }
+    lexer_consume_peek(this->lexer);
+    double result = parser_next_expr(this);
+
+    Token *rparen = lexer_peek(this->lexer);
+    if(token_type(rparen) != TOKT_RPAREN) {
+        parser_error(this->lexer, "TOKT_RPAREN");
+        exit(-1);
+    }
+    lexer_consume_peek(this->lexer);
+    return result;
+}
+
 double parser_next_atom(Parser *this) {
     Token *peek = lexer_peek(this->lexer);
 
@@ -132,15 +150,7 @@ double parser_next_atom(Parser *this) {
         }
     case TOKT_LPAREN:
         {
-            lexer_consume_peek(this->lexer);
-            double result = parser_next_expr(this);
-            Token *rparen = lexer_peek(this->lexer);
-            if(token_type(rparen) != TOKT_RPAREN) {
-                parser_error(this->lexer, "TOKT_RPAREN");
-                exit(-1);
-            }
-            lexer_consume_peek(this->lexer);
-            return result;
+            return parser_handle_parens(this);
         }
     case TOKT_IDENTIFIER:
         {
