@@ -1,6 +1,6 @@
-#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "error.h"
 #include "parser.h"
 
 struct line {
@@ -26,8 +26,8 @@ int line_read(struct line *this, FILE *fp) {
 
 int main(int argc, const char **argv) {
     FILE *fp = argc < 2 ? stdin : fopen(argv[1], "r");
-    if(!fp)
-        goto fail;
+    error_ensure_errno_ok();
+
     struct line *line = line_new();
     Parser *parser = parser_new("");
 
@@ -51,8 +51,4 @@ int main(int argc, const char **argv) {
     if(fp != stdin)
         fclose(fp);
     return 0;
-
-fail:
-    perror("Error");
-    return errno;
 }
