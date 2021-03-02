@@ -24,14 +24,16 @@ static void varmap_setval(VarEntry **this, const char *key, double value) {
     *curr = new;
 }
 
-static double varmap_getval(VarEntry *this, const char *key, double default_) {
+static double varmap_getval(VarEntry *this, const char *key) {
     VarEntry *curr = this;
     while(curr) {
         if(strcmp(curr->key, key) == 0)
             return curr->value;
         curr = curr->next;
     }
-    return default_;
+
+    fprintf(stderr, "Error: No value for key: %s\n", key);
+    exit(-1);
 }
 
 Parser *parser_new(const char *program) {
@@ -74,14 +76,14 @@ double parser_handle_variable(Parser *this) {
 
     peek = lexer_peek(this->lexer);
 
-    double result = 0.0;
+    double result;
 
     if(token_type(peek) == TOKT_EQ) {
         lexer_consume_peek(this->lexer);
         result = parser_next_expr(this);
         varmap_setval(&this->varmap, key, result);
     } else {
-        result = varmap_getval(this->varmap, key, 0.0);
+        result = varmap_getval(this->varmap, key);
     }
 
     free(key);
