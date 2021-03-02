@@ -63,7 +63,7 @@ fail:
     exit(errno);
 }
 
-void parser_continue(Parser *this, const char *program) {
+void parser_set_buff(Parser *this, const char *program) {
     free(this->lexer);
     this->lexer = lexer_new(program);
 }

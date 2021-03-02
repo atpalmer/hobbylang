@@ -38,7 +38,7 @@ int main(int argc, const char **argv) {
             break;
         if(*line->buff == '\n')
             continue;
-        parser_continue(parser, line->buff);
+        parser_set_buff(parser, line->buff);
         double value = parser_next_line(parser);
         printf("%f\n", value);
         if(fp == stdin)
