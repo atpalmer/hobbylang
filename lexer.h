@@ -1,7 +1,7 @@
 #ifndef LEXER_H
 #define LEXER_H
 
-enum token_type {
+typedef enum {
     TOKT_NULL = 0,
     TOKT_NEWLINE = '\n',
     TOKT_ADD = '+',
@@ -14,10 +14,10 @@ enum token_type {
     TOKT_RPAREN = ')',
     TOKT_NUMBER = -1,
     TOKT_IDENTIFIER = -2,
-};
+} TokenType;
 
 typedef struct {
-    enum token_type type;
+    TokenType type;
     int bytes_read;
 } Token;
 
@@ -44,7 +44,7 @@ void lexer_free(Lexer *this);
 Token *lexer_peek(Lexer *this);
 void lexer_consume_peek(Lexer *this);
 
-static inline enum token_type token_type(Token *this) {
+static inline TokenType token_type(Token *this) {
     return this ? this->type : TOKT_NULL;
 }
 

@@ -82,7 +82,7 @@ static int _read_identifier(const char *data, char *buff, int bufflen) {
     return valp - buff;
 }
 
-static void token_base_init(Token *base, enum token_type type, int bytes_read) {
+static void token_base_init(Token *base, TokenType type, int bytes_read) {
     base->type = type;
     base->bytes_read = bytes_read;
 }
