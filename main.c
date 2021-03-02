@@ -41,6 +41,8 @@ int main(int argc, const char **argv) {
         parser_continue(parser, line->buff);
         double value = parser_next_line(parser);
         printf("%f\n", value);
+        if(fp == stdin)
+            parser_setlinevar(parser, value);
     }
 
     printf("\n");

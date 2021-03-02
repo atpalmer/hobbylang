@@ -46,6 +46,10 @@ static double varmap_getval(VarEntry *this, const char *key) {
     exit(-1);
 }
 
+void parser_setlinevar(Parser *this, double value) {
+    varmap_setval(&this->varmap, "_", value);
+}
+
 Parser *parser_new(const char *program) {
     Parser *new = malloc(sizeof *new);
     if(!new)
