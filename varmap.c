@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "error.h"
+#include "syswrap.h"
 #include "varmap.h"
 
 void varmap_setval(VarEntry **this, const char *key, double value) {
@@ -14,12 +14,8 @@ void varmap_setval(VarEntry **this, const char *key, double value) {
         curr = &(*curr)->next;
     }
 
-    VarEntry *new = malloc(sizeof *new);
-    error_ensure_errno_ok();
-
-    new->key = strdup(key);
-    error_ensure_errno_ok();
-
+    VarEntry *new = malloc_or_die(sizeof *new);
+    new->key = strdup_or_die(key);
     new->value = value;
     new->next = NULL;
     *curr = new;
