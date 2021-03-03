@@ -3,17 +3,17 @@
 
 typedef enum {
     TOKT_NULL = 0,
-    TOKT_NEWLINE = '\n',
-    TOKT_ADD = '+',
-    TOKT_SUB = '-',
-    TOKT_MULT = '*',
-    TOKT_DIV = '/',
-    TOKT_MOD = '%',
-    TOKT_EQ = '=',
-    TOKT_LPAREN = '(',
-    TOKT_RPAREN = ')',
-    TOKT_NUMBER = -1,
-    TOKT_IDENTIFIER = -2,
+    TOKT_NEWLINE,
+    TOKT_ADD,
+    TOKT_SUB,
+    TOKT_MULT,
+    TOKT_DIV,
+    TOKT_MOD,
+    TOKT_EQ,
+    TOKT_LPAREN,
+    TOKT_RPAREN,
+    TOKT_NUMBER,
+    TOKT_IDENTIFIER,
 } TokenType;
 
 typedef struct {

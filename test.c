@@ -3,11 +3,11 @@
 #include "parser.h"
 #include "lexer.h"
 
-static void assert_equal_char(int left, int right) {
+static void assert_equal_int(int left, int right) {
     if(left == right)
-        printf("OK: '%c' (%d) == '%c' (%d)\n", left, left, right, right);
+        printf("OK: %d == %d\n", left, right);
     else
-        fprintf(stderr, "ERROR: '%c' (%d)!= '%c' (%d)\n", left, left, right, right);
+        fprintf(stderr, "ERROR: %d != %d\n", left, right);
 }
 
 static void assert_equal_double(double left, double right) {
@@ -37,52 +37,52 @@ void test_lexer(void) {
     Token *curr;
 
     curr = lexer_next(lexer);
-    assert_equal_char(token_type(curr), TOKT_IDENTIFIER);
+    assert_equal_int(token_type(curr), TOKT_IDENTIFIER);
     assert_equal_string(token_varname(curr), "x");
 
     curr = lexer_next(lexer);
-    assert_equal_char(token_type(curr), TOKT_EQ);
+    assert_equal_int(token_type(curr), TOKT_EQ);
 
     curr = lexer_next(lexer);
-    assert_equal_char(token_type(curr), TOKT_NUMBER);
+    assert_equal_int(token_type(curr), TOKT_NUMBER);
     assert_equal_double(token_number(curr), 2);
 
     curr = lexer_next(lexer);
-    assert_equal_char(token_type(curr), TOKT_NEWLINE);
+    assert_equal_int(token_type(curr), TOKT_NEWLINE);
 
     curr = lexer_next(lexer);
-    assert_equal_char(token_type(curr), TOKT_IDENTIFIER);
+    assert_equal_int(token_type(curr), TOKT_IDENTIFIER);
     assert_equal_string(token_varname(curr), "x");
 
     curr = lexer_next(lexer);
-    assert_equal_char(token_type(curr), TOKT_MULT);
+    assert_equal_int(token_type(curr), TOKT_MULT);
 
     curr = lexer_next(lexer);
-    assert_equal_char(token_type(curr), TOKT_NUMBER);
+    assert_equal_int(token_type(curr), TOKT_NUMBER);
     assert_equal_double(token_number(curr), 1.5);
 
     curr = lexer_next(lexer);
-    assert_equal_char(token_type(curr), TOKT_ADD);
+    assert_equal_int(token_type(curr), TOKT_ADD);
 
     curr = lexer_next(lexer);
-    assert_equal_char(token_type(curr), TOKT_LPAREN);
+    assert_equal_int(token_type(curr), TOKT_LPAREN);
 
     curr = lexer_next(lexer);
-    assert_equal_char(token_type(curr), TOKT_NUMBER);
+    assert_equal_int(token_type(curr), TOKT_NUMBER);
     assert_equal_double(token_number(curr), 123.0);
 
     curr = lexer_next(lexer);
-    assert_equal_char(token_type(curr), TOKT_SUB);
+    assert_equal_int(token_type(curr), TOKT_SUB);
 
     curr = lexer_next(lexer);
-    assert_equal_char(token_type(curr), TOKT_NUMBER);
+    assert_equal_int(token_type(curr), TOKT_NUMBER);
     assert_equal_double(token_number(curr), 456.0);
 
     curr = lexer_next(lexer);
-    assert_equal_char(token_type(curr), TOKT_RPAREN);
+    assert_equal_int(token_type(curr), TOKT_RPAREN);
 
     curr = lexer_next(lexer);
-    assert_equal_char(token_type(curr), TOKT_NEWLINE);
+    assert_equal_int(token_type(curr), TOKT_NEWLINE);
 
     lexer_free(lexer);
 }
