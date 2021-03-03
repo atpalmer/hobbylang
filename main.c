@@ -1,6 +1,5 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include "error.h"
+#include "syswrap.h"
 #include "parser.h"
 
 struct line {
@@ -9,13 +8,9 @@ struct line {
 };
 
 struct line *line_new(void) {
-    struct line *new = malloc(sizeof *new);
-    error_ensure_errno_ok();
-
+    struct line *new = malloc_or_die(sizeof *new);
     new->size = 128;
-    new->buff = malloc(sizeof *new->buff * new->size);
-    error_ensure_errno_ok();
-
+    new->buff = malloc_or_die(sizeof *new->buff * new->size);
     return new;
 }
 
@@ -29,8 +24,7 @@ int line_read(struct line *this, FILE *fp) {
 }
 
 int main(int argc, const char **argv) {
-    FILE *fp = argc < 2 ? stdin : fopen(argv[1], "r");
-    error_ensure_errno_ok();
+    FILE *fp = argc < 2 ? stdin : fopen_or_die(argv[1], "r");
 
     struct line *line = line_new();
     Parser *parser = parser_new("");
