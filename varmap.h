@@ -9,5 +9,6 @@ typedef struct VarEntry {
 
 void varmap_setval(VarEntry **this, const char *key, double value);
 double varmap_getval(VarEntry *this, const char *key);
+void varmap_free(VarEntry *this);
 
 #endif

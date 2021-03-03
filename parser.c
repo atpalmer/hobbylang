@@ -28,12 +28,7 @@ void parser_set_buff(Parser *this, const char *program) {
 void parser_free(Parser *this) {
     lexer_free(this->lexer);
     token_free(this->curr);
-    VarEntry *entry = this->varmap;
-    while(entry) {
-        VarEntry *next = entry->next;
-        free(entry);
-        entry = next;
-    }
+    varmap_free(this->varmap);
     free(this);
 }
 

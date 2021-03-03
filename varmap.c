@@ -37,3 +37,8 @@ double varmap_getval(VarEntry *this, const char *key) {
     exit(-1);
 }
 
+void varmap_free(VarEntry *this) {
+    if(this->next)
+        free(this->next);
+    free(this);
+}
