@@ -106,8 +106,13 @@ static int _read_symbol(const char *data, TokenType *type) {
         return 1;
     }
     if(*data == '=') {
-        *type = TOKT_EQ;
-        return 1;
+        if(memcmp(data, "==", 2) == 0) {
+            *type = TOKT_DUBEQ;
+            return 2;
+        } else {
+            *type = TOKT_EQ;
+            return 1;
+        }
     }
     if(*data == '(') {
         *type = TOKT_LPAREN;

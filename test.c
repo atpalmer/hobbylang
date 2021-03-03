@@ -29,6 +29,7 @@ void test_lexer(void) {
         "x = 2.0\n"
         "x * 1.5 + (123 - 456)\n"
         "x // 1.5\n"
+        "x == 2\n"
         ;
 
     Lexer *lexer = lexer_new(PROGRAM);
@@ -95,6 +96,20 @@ void test_lexer(void) {
     curr = lexer_next(lexer);
     assert_equal_int(token_type(curr), TOKT_NUMBER);
     assert_equal_double(token_number(curr), 1.5);
+
+    curr = lexer_next(lexer);
+    assert_equal_int(token_type(curr), TOKT_NEWLINE);
+
+    curr = lexer_next(lexer);
+    assert_equal_int(token_type(curr), TOKT_IDENTIFIER);
+    assert_equal_string(token_varname(curr), "x");
+
+    curr = lexer_next(lexer);
+    assert_equal_int(token_type(curr), TOKT_DUBEQ);
+
+    curr = lexer_next(lexer);
+    assert_equal_int(token_type(curr), TOKT_NUMBER);
+    assert_equal_double(token_number(curr), 2);
 
     lexer_free(lexer);
 }

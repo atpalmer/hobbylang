@@ -12,6 +12,7 @@ typedef enum {
     TOKT_FLOORDIV,
     TOKT_MOD,
     TOKT_EQ,
+    TOKT_DUBEQ,
     TOKT_LPAREN,
     TOKT_RPAREN,
     TOKT_NUMBER,
