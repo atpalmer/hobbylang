@@ -1,6 +1,9 @@
 #ifndef ERROR_H
 #define ERROR_H
 
+#define ERRSTR_MemoryError      "MemoryError"
+#define ERRSTR_OSError          "OSError"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "lexer.h"

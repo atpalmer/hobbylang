@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "error.h"
 #include "syswrap.h"
 
 
@@ -12,7 +13,7 @@ void *malloc_or_die(size_t size) {
     return p;
 
 die:
-    perror("MemoryError");
+    perror(ERRSTR_MemoryError);
     exit(errno);
 }
 
@@ -23,7 +24,7 @@ FILE *fopen_or_die(const char *filename, const char *mode) {
     return fp;
 
 die:
-    perror("OSError");
+    perror(ERRSTR_OSError);
     exit(errno);
 }
 
@@ -34,6 +35,6 @@ char *strdup_or_die(const char *s) {
     return p;
 
 die:
-    perror("MemoryError");
+    perror(ERRSTR_MemoryError);
     exit(errno);
 }
