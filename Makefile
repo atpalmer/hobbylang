@@ -1,6 +1,6 @@
 P=calc
 TESTP=test
-OBJECTS=lexer.o parser.o
+OBJECTS=lexer.o parser.o varmap.o
 MAIN_OBJECTS=main.o
 TEST_OBJECTS=test.o
 CFLAGS=-Wall -Wextra -pedantic -g

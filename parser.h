@@ -2,12 +2,7 @@
 #define PARSER_H
 
 #include "lexer.h"
-
-typedef struct VarEntry {
-    char *key;
-    double value;
-    struct VarEntry *next;
-} VarEntry;
+#include "varmap.h"
 
 typedef struct {
     Lexer *lexer;
