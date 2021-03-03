@@ -8,3 +8,4 @@ alfa = 5
 alfa * bravo
 bravo // 2
 3 * 2 ** 4
+4 * 3 == 135 % 123

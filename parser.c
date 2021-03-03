@@ -157,7 +157,7 @@ done:
     return result;
 }
 
-double parser_expr(Parser *this) {
+double parser_sum(Parser *this) {
     double result = parser_term(this);
 
     for(;;) {
@@ -171,6 +171,26 @@ double parser_expr(Parser *this) {
         case TOKT_SUB:
             parser_accept(this, TOKT_SUB);
             result -= parser_term(this);
+            break;
+        default:
+            goto done;
+        }
+    }
+
+done:
+    return result;
+}
+
+double parser_expr(Parser *this) {
+    double result = parser_sum(this);
+
+    for(;;) {
+        Token *curr = parser_curr(this);
+
+        switch(token_type(curr)) {
+        case TOKT_DUBEQ:
+            parser_accept(this, TOKT_DUBEQ);
+            result = (result == parser_sum(this));
             break;
         default:
             goto done;
