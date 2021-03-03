@@ -70,11 +70,6 @@ void parser_free(Parser *this) {
     free(this);
 }
 
-static inline void parser_error(Lexer *lexer, const char *expected) {
-    fprintf(stderr, "Parse error. Position: %d. Expected: %s. Found: '%c' (%d)\n",
-        lexer->pos, expected, token_type(lexer->peek), token_type(lexer->peek));
-}
-
 void parser_accept(Parser *this, TokenType token_type) {
     Token *peek = lexer_peek(this->lexer);
     error_ensure_token_type(peek, token_type);
@@ -137,7 +132,8 @@ double parser_next_atom(Parser *this) {
         break;
     }
 
-    parser_error(this->lexer, "TOKT_NUMBER");
+    fprintf(stderr, "TokenType Error: Cannot parse atom. Position: %d. Found: '%c' (%d).\n",
+        this->lexer->pos, token_type(peek), token_type(peek));
     exit(-1);
 }
 
