@@ -83,6 +83,13 @@ void parser_accept(Parser *this, TokenType token_type) {
 
 double parser_next_expr(Parser *this);
 
+double parser_handle_assignment(Parser *this, const char *key) {
+    parser_accept(this, TOKT_EQ);
+    double result = parser_next_expr(this);
+    varmap_setval(&this->varmap, key, result);
+    return result;
+}
+
 double parser_handle_variable(Parser *this) {
     Token *var = lexer_peek(this->lexer);
     char *key = strdup(token_varname(var));
@@ -91,15 +98,9 @@ double parser_handle_variable(Parser *this) {
 
     Token *eq = lexer_peek(this->lexer);
 
-    double result;
-
-    if(token_type(eq) == TOKT_EQ) {
-        parser_accept(this, TOKT_EQ);
-        result = parser_next_expr(this);
-        varmap_setval(&this->varmap, key, result);
-    } else {
-        result = varmap_getval(this->varmap, key);
-    }
+    double result = token_type(eq) == TOKT_EQ
+        ? parser_handle_assignment(this, key)
+        : varmap_getval(this->varmap, key);
 
     free(key);
     return result;
