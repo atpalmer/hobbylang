@@ -6,3 +6,4 @@ alfa = 1
 bravo = 7
 alfa = 5
 alfa * bravo
+bravo // 2

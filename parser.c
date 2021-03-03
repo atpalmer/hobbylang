@@ -124,6 +124,11 @@ double parser_term(Parser *this) {
             parser_accept(this, TOKT_DIV);
             result /= parser_atom(this);
             break;
+        case TOKT_FLOORDIV:
+            parser_accept(this, TOKT_FLOORDIV);
+            result /= parser_atom(this);
+            result = floor(result);
+            break;
         case TOKT_MOD:
             parser_accept(this, TOKT_MOD);
             result = fmod(result, parser_atom(this));

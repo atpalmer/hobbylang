@@ -28,6 +28,7 @@ void test_lexer(void) {
     static const char *PROGRAM =
         "x = 2.0\n"
         "x * 1.5 + (123 - 456)\n"
+        "x // 1.5\n"
         ;
 
     Lexer *lexer = lexer_new(PROGRAM);
@@ -84,6 +85,17 @@ void test_lexer(void) {
     curr = lexer_next(lexer);
     assert_equal_int(token_type(curr), TOKT_NEWLINE);
 
+    curr = lexer_next(lexer);
+    assert_equal_int(token_type(curr), TOKT_IDENTIFIER);
+    assert_equal_string(token_varname(curr), "x");
+
+    curr = lexer_next(lexer);
+    assert_equal_int(token_type(curr), TOKT_FLOORDIV);
+
+    curr = lexer_next(lexer);
+    assert_equal_int(token_type(curr), TOKT_NUMBER);
+    assert_equal_double(token_number(curr), 1.5);
+
     lexer_free(lexer);
 }
 
@@ -97,6 +109,7 @@ void test_parser(void) {
             "bravo = 7\n"
             "alfa = 5\n"
             "alfa * bravo\n"
+            "bravo // 2\n"
             ;
 
     Parser *parser = parser_new(PROGRAM);
@@ -109,6 +122,7 @@ void test_parser(void) {
     assert_equal_double(parser_line(parser), 7);
     assert_equal_double(parser_line(parser), 5);
     assert_equal_double(parser_line(parser), 35);
+    assert_equal_double(parser_line(parser), 3);
 
     parser_free(parser);
 }
