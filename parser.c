@@ -1,8 +1,8 @@
-#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include "error.h"
 #include "common.h"
 #include "lexer.h"
 #include "parser.h"
@@ -19,19 +19,14 @@ static void varmap_setval(VarEntry **this, const char *key, double value) {
     }
 
     VarEntry *new = malloc(sizeof *new);
-    if(!new)
-        goto fail;
+    error_ensure_errno_ok();
+
     new->key = strdup(key);
-    if(!new->key)
-        goto fail;
+    error_ensure_errno_ok();
+
     new->value = value;
     new->next = NULL;
     *curr = new;
-    return;
-
-fail:
-    perror("Error");
-    exit(errno);
 }
 
 static double varmap_getval(VarEntry *this, const char *key) {
@@ -52,15 +47,11 @@ void parser_setlinevar(Parser *this, double value) {
 
 Parser *parser_new(const char *program) {
     Parser *new = malloc(sizeof *new);
-    if(!new)
-        goto fail;
+    error_ensure_errno_ok();
+
     new->lexer = lexer_new(program);
     new->varmap = NULL;
     return new;
-
-fail:
-    perror("Error");
-    exit(errno);
 }
 
 void parser_set_buff(Parser *this, const char *program) {
