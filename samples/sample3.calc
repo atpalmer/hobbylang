@@ -7,3 +7,4 @@ bravo = 7
 alfa = 5
 alfa * bravo
 bravo // 2
+3 * 2 ** 4

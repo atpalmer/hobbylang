@@ -109,8 +109,23 @@ double parser_atom(Parser *this) {
     exit(-1);
 }
 
+double parser_factor(Parser *this) {
+    double base = parser_atom(this);
+
+    Token *curr = parser_curr(this);
+    switch(token_type(curr)) {
+    case TOKT_DUBSTAR:
+        parser_accept(this, TOKT_DUBSTAR);
+        return pow(base, parser_factor(this));
+    default:
+        break;
+    }
+
+    return base;
+}
+
 double parser_term(Parser *this) {
-    double result = parser_atom(this);
+    double result = parser_factor(this);
 
     for(;;) {
         Token *curr = parser_curr(this);
@@ -118,20 +133,20 @@ double parser_term(Parser *this) {
         switch(token_type(curr)) {
         case TOKT_MULT:
             parser_accept(this, TOKT_MULT);
-            result *= parser_atom(this);
+            result *= parser_factor(this);
             break;
         case TOKT_DIV:
             parser_accept(this, TOKT_DIV);
-            result /= parser_atom(this);
+            result /= parser_factor(this);
             break;
         case TOKT_FLOORDIV:
             parser_accept(this, TOKT_FLOORDIV);
-            result /= parser_atom(this);
+            result /= parser_factor(this);
             result = floor(result);
             break;
         case TOKT_MOD:
             parser_accept(this, TOKT_MOD);
-            result = fmod(result, parser_atom(this));
+            result = fmod(result, parser_factor(this));
             break;
         default:
             goto done;

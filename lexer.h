@@ -7,6 +7,7 @@ typedef enum {
     TOKT_ADD,
     TOKT_SUB,
     TOKT_MULT,
+    TOKT_DUBSTAR,
     TOKT_DIV,
     TOKT_FLOORDIV,
     TOKT_MOD,

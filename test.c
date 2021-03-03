@@ -110,6 +110,7 @@ void test_parser(void) {
             "alfa = 5\n"
             "alfa * bravo\n"
             "bravo // 2\n"
+            "3 * 2 ** 4\n"
             ;
 
     Parser *parser = parser_new(PROGRAM);
@@ -123,6 +124,7 @@ void test_parser(void) {
     assert_equal_double(parser_line(parser), 5);
     assert_equal_double(parser_line(parser), 35);
     assert_equal_double(parser_line(parser), 3);
+    assert_equal_double(parser_line(parser), 48);
 
     parser_free(parser);
 }
