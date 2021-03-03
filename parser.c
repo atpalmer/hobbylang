@@ -75,21 +75,26 @@ static inline void parser_error(Lexer *lexer, const char *expected) {
         lexer->pos, expected, token_type(lexer->peek), token_type(lexer->peek));
 }
 
+void parser_accept(Parser *this, TokenType token_type) {
+    Token *peek = lexer_peek(this->lexer);
+    error_ensure_token_type(peek, token_type);
+    lexer_consume_peek(this->lexer);
+}
+
 double parser_next_expr(Parser *this);
 
 double parser_handle_variable(Parser *this) {
-    Token *peek = lexer_peek(this->lexer);
-    error_ensure_token_type(peek, TOKT_IDENTIFIER);
+    Token *var = lexer_peek(this->lexer);
+    char *key = strdup(token_varname(var));
+    error_ensure_errno_ok();
+    parser_accept(this, TOKT_IDENTIFIER);
 
-    char *key = strdup(token_varname(peek));
-    lexer_consume_peek(this->lexer);
-
-    peek = lexer_peek(this->lexer);
+    Token *eq = lexer_peek(this->lexer);
 
     double result;
 
-    if(token_type(peek) == TOKT_EQ) {
-        lexer_consume_peek(this->lexer);
+    if(token_type(eq) == TOKT_EQ) {
+        parser_accept(this, TOKT_EQ);
         result = parser_next_expr(this);
         varmap_setval(&this->varmap, key, result);
     } else {
@@ -101,25 +106,16 @@ double parser_handle_variable(Parser *this) {
 }
 
 double parser_handle_parens(Parser *this) {
-    Token *lparen = lexer_peek(this->lexer);
-    error_ensure_token_type(lparen, TOKT_LPAREN);
-    lexer_consume_peek(this->lexer);
-
+    parser_accept(this, TOKT_LPAREN);
     double result = parser_next_expr(this);
-
-    Token *rparen = lexer_peek(this->lexer);
-    error_ensure_token_type(rparen, TOKT_RPAREN);
-    lexer_consume_peek(this->lexer);
-
+    parser_accept(this, TOKT_RPAREN);
     return result;
 }
 
 double parser_next_number(Parser *this) {
     Token *peek = lexer_peek(this->lexer);
-    error_ensure_token_type(peek, TOKT_NUMBER);
-
     double result = token_number(peek);
-    lexer_consume_peek(this->lexer);
+    parser_accept(this, TOKT_NUMBER);
     return result;
 }
 
@@ -130,7 +126,7 @@ double parser_next_atom(Parser *this) {
     case TOKT_NUMBER:
         return parser_next_number(this);
     case TOKT_SUB:
-        lexer_consume_peek(this->lexer);
+        parser_accept(this, TOKT_SUB);
         return -parser_next_atom(this);
     case TOKT_LPAREN:
         return parser_handle_parens(this);
@@ -152,15 +148,15 @@ double parser_next_term(Parser *this) {
 
         switch(token_type(peek)) {
         case TOKT_MULT:
-            lexer_consume_peek(this->lexer);
+            parser_accept(this, TOKT_MULT);
             result *= parser_next_atom(this);
             break;
         case TOKT_DIV:
-            lexer_consume_peek(this->lexer);
+            parser_accept(this, TOKT_DIV);
             result /= parser_next_atom(this);
             break;
         case TOKT_MOD:
-            lexer_consume_peek(this->lexer);
+            parser_accept(this, TOKT_MOD);
             result = fmod(result, parser_next_atom(this));
             break;
         default:
@@ -180,11 +176,11 @@ double parser_next_expr(Parser *this) {
 
         switch(token_type(peek)) {
         case TOKT_ADD:
-            lexer_consume_peek(this->lexer);
+            parser_accept(this, TOKT_ADD);
             result += parser_next_term(this);
             break;
         case TOKT_SUB:
-            lexer_consume_peek(this->lexer);
+            parser_accept(this, TOKT_SUB);
             result -= parser_next_term(this);
             break;
         default:
@@ -198,11 +194,7 @@ done:
 
 double parser_next_line(Parser *this) {
     double result = parser_next_expr(this);
-
-    Token *peek = lexer_peek(this->lexer);
-    error_ensure_token_type(peek, TOKT_NEWLINE);
-    lexer_consume_peek(this->lexer);
-
+    parser_accept(this, TOKT_NEWLINE);
     return result;
 }
 
