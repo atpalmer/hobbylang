@@ -79,9 +79,7 @@ double parser_next_expr(Parser *this);
 
 double parser_handle_variable(Parser *this) {
     Token *peek = lexer_peek(this->lexer);
-
-    if(token_type(peek) != TOKT_IDENTIFIER)
-        goto fail;
+    error_ensure_token_type(peek, TOKT_IDENTIFIER);
 
     char *key = strdup(token_varname(peek));
     lexer_consume_peek(this->lexer);
@@ -100,42 +98,29 @@ double parser_handle_variable(Parser *this) {
 
     free(key);
     return result;
-
-fail:
-    parser_error(this->lexer, "TOKT_IDENTIFIER");
-    exit(-1);
 }
 
 double parser_handle_parens(Parser *this) {
     Token *lparen = lexer_peek(this->lexer);
-    if(token_type(lparen) != TOKT_LPAREN) {
-        parser_error(this->lexer, "TOKT_LPAREN");
-        exit(-1);
-    }
+    error_ensure_token_type(lparen, TOKT_LPAREN);
     lexer_consume_peek(this->lexer);
+
     double result = parser_next_expr(this);
 
     Token *rparen = lexer_peek(this->lexer);
-    if(token_type(rparen) != TOKT_RPAREN) {
-        parser_error(this->lexer, "TOKT_RPAREN");
-        exit(-1);
-    }
+    error_ensure_token_type(rparen, TOKT_RPAREN);
     lexer_consume_peek(this->lexer);
+
     return result;
 }
 
 double parser_next_number(Parser *this) {
     Token *peek = lexer_peek(this->lexer);
-    if(token_type(peek) != TOKT_NUMBER)
-        goto fail;
+    error_ensure_token_type(peek, TOKT_NUMBER);
 
     double result = token_number(peek);
     lexer_consume_peek(this->lexer);
     return result;
-
-fail:
-    parser_error(this->lexer, "TOKT_NUMBER");
-    exit(-1);
 }
 
 double parser_next_atom(Parser *this) {
@@ -215,16 +200,10 @@ double parser_next_line(Parser *this) {
     double result = parser_next_expr(this);
 
     Token *peek = lexer_peek(this->lexer);
-
-    if(token_type(peek) != TOKT_NEWLINE)
-        goto fail;
-
+    error_ensure_token_type(peek, TOKT_NEWLINE);
     lexer_consume_peek(this->lexer);
-    return result;
 
-fail:
-    parser_error(this->lexer, "TOKT_NEWLINE");
-    exit(-1);
+    return result;
 }
 
 int parser_has_next(Parser *this) {
