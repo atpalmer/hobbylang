@@ -6,6 +6,7 @@
 
 typedef struct {
     Lexer *lexer;
+    Token *curr;
     VarEntry *varmap;
 } Parser;
 

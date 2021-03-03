@@ -35,17 +35,17 @@ typedef struct {
     const char *data;
     int len;
     int pos;
-    Token *peek;
 } Lexer;
 
 
 Lexer *lexer_new(const char *data);
 void lexer_free(Lexer *this);
-Token *lexer_peek(Lexer *this);
-void lexer_consume_peek(Lexer *this);
+Token *lexer_next(Lexer *this);
 
 TokenType token_type(Token *this);
 double token_number(Token *this);
 const char *token_varname(Token *this);
+
+void token_free(Token *this);
 
 #endif
