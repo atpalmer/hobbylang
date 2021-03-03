@@ -59,7 +59,7 @@ static int _is_eof(char c) {
     return c == '\0';
 }
 
-static int _is_literal(char c) {
+static int _is_symbol(char c) {
     static const char VALID[] = {
         TOKT_NEWLINE,
         TOKT_ADD,
@@ -91,14 +91,60 @@ static int _read_identifier(const char *data, char *buff, int bufflen) {
     return valp - buff;
 }
 
+static int _read_symbol(const char *data, TokenType *type) {
+    if(*data == '\n') {
+        *type = TOKT_NEWLINE;
+        return 1;
+    }
+    if(*data == '+') {
+        *type = TOKT_ADD;
+        return 1;
+    }
+    if(*data == '-') {
+        *type = TOKT_SUB;
+        return 1;
+    }
+    if(*data == '*') {
+        *type = TOKT_MULT;
+        return 1;
+    }
+    if(*data == '/') {
+        *type = TOKT_DIV;
+        return 1;
+    }
+    if(*data == '%') {
+        *type = TOKT_MOD;
+        return 1;
+    }
+    if(*data == '=') {
+        *type = TOKT_EQ;
+        return 1;
+    }
+    if(*data == '(') {
+        *type = TOKT_LPAREN;
+        return 1;
+    }
+    if(*data == ')') {
+        *type = TOKT_RPAREN;
+        return 1;
+    }
+
+    *type = TOKT_NULL;
+    return 0;
+}
+
 static void token_base_init(Token *base, TokenType type, int bytes_read) {
     base->type = type;
     base->bytes_read = bytes_read;
 }
 
-static Token *token_new_literal(const char *data) {
+static Token *token_new_symbol(const char *data) {
+    TokenType type = TOKT_NULL;
+    int bytes_read = _read_symbol(data, &type);
+    if(!bytes_read)
+        return NULL;
     Token *new = malloc_or_die(sizeof *new);
-    token_base_init(new, *data, 1);
+    token_base_init(new, type, bytes_read);
     return new;
 }
 
@@ -122,8 +168,8 @@ static Token *_peek(const char *data) {
 
     if(_is_eof(*data))
         return NULL;
-    else if(_is_literal(*data))
-        return token_new_literal(data);
+    else if(_is_symbol(*data))
+        return token_new_symbol(data);
     else if(_is_numeric(*data))
         return token_new_numeric(data);
     else if(_is_alpha(*data))
