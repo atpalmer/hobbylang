@@ -114,6 +114,23 @@ static int _read_symbol(const char *data, TokenType *type) {
             return 1;
         }
     }
+    if(*data == '<') {
+        *type = TOKT_LT;
+        return 1;
+    }
+    if(*data == '>') {
+        *type = TOKT_GT;
+        return 1;
+    }
+    if(*data == '!') {
+        if(memcmp(data, "!=", 2) == 0) {
+            *type = TOKT_NE;
+            return 2;
+        } else {
+            *type = TOKT_NOT;
+            return 1;
+        }
+    }
     if(*data == '(') {
         *type = TOKT_LPAREN;
         return 1;

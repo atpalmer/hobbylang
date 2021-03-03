@@ -192,6 +192,18 @@ double parser_expr(Parser *this) {
             parser_accept(this, TOKT_DUBEQ);
             result = (result == parser_sum(this));
             break;
+        case TOKT_NE:
+            parser_accept(this, TOKT_NE);
+            result = (result != parser_sum(this));
+            break;
+        case TOKT_LT:
+            parser_accept(this, TOKT_LT);
+            result = (result < parser_sum(this));
+            break;
+        case TOKT_GT:
+            parser_accept(this, TOKT_GT);
+            result = (result > parser_sum(this));
+            break;
         default:
             goto done;
         }

@@ -127,6 +127,9 @@ void test_parser(void) {
             "bravo // 2\n"
             "3 * 2 ** 4\n"
             "4 * 3 == 135 % 123\n"
+            "0 > -5\n"
+            "10 - 20 < 10000000\n"
+            "2 + 2 != 4\n"
             ;
 
     Parser *parser = parser_new(PROGRAM);
@@ -142,6 +145,9 @@ void test_parser(void) {
     assert_equal_double(parser_line(parser), 3);
     assert_equal_double(parser_line(parser), 48);
     assert_equal_double(parser_line(parser), 1);
+    assert_equal_double(parser_line(parser), 1);
+    assert_equal_double(parser_line(parser), 1);
+    assert_equal_double(parser_line(parser), 0);
 
     parser_free(parser);
 }
