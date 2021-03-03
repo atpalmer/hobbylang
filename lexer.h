@@ -43,6 +43,7 @@ void lexer_free(Lexer *this);
 Token *lexer_next(Lexer *this);
 
 TokenType token_type(Token *this);
+Token *token_ensure_type(Token *this, TokenType expect);
 double token_number(Token *this);
 const char *token_varname(Token *this);
 

@@ -45,7 +45,7 @@ void parser_next(Parser *this) {
 
 void parser_accept(Parser *this, TokenType token_type) {
     Token *curr = parser_curr(this);
-    error_ensure_token_type(curr, token_type);
+    token_ensure_type(curr, token_type);
     parser_next(this);
 }
 

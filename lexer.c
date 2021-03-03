@@ -10,14 +10,22 @@ TokenType token_type(Token *this) {
     return this ? this->type : TOKT_NULL;
 }
 
+Token *token_ensure_type(Token *this, TokenType expect) {
+    if(token_type(this) == expect)
+        return this;
+    fprintf(stderr, "TokenTypeError: Expected: %d. Received: %d\n",
+        expect, token_type(this));
+    exit(-1);
+}
+
 double token_number(Token *this) {
-    error_ensure_token_type(this, TOKT_NUMBER);
-    return ((NumericToken *)this)->value;
+    NumericToken *numtok = (NumericToken *)token_ensure_type(this, TOKT_NUMBER);
+    return numtok->value;
 }
 
 const char *token_varname(Token *this) {
-    error_ensure_token_type(this, TOKT_IDENTIFIER);
-    return ((IdentifierToken *)this)->value;
+    IdentifierToken *idtok = (IdentifierToken *)token_ensure_type(this, TOKT_IDENTIFIER);
+    return idtok->value;
 }
 
 Lexer *lexer_new(const char *data) {
