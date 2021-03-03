@@ -3,6 +3,7 @@
 #include <string.h>
 #include <math.h>
 #include "error.h"
+#include "syswrap.h"
 #include "lexer.h"
 #include "parser.h"
 
@@ -11,9 +12,7 @@ void parser_setlinevar(Parser *this, double value) {
 }
 
 Parser *parser_new(const char *program) {
-    Parser *new = malloc(sizeof *new);
-    error_ensure_errno_ok();
-
+    Parser *new = malloc_or_die(sizeof *new);
     new->lexer = lexer_new(program);
     new->curr = NULL;
     new->varmap = NULL;
@@ -61,8 +60,7 @@ double parser_handle_assignment(Parser *this, const char *key) {
 
 double parser_handle_variable(Parser *this) {
     Token *var = parser_curr(this);
-    char *key = strdup(token_varname(var));
-    error_ensure_errno_ok();
+    char *key = strdup_or_die(token_varname(var));
     parser_accept(this, TOKT_IDENTIFIER);
 
     Token *eq = parser_curr(this);
