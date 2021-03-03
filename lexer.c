@@ -50,28 +50,8 @@ static int _is_alpha(char c) {
     return BOOL(memchr(VALID, c, strlen(VALID)));
 }
 
-static int _is_numeric(char c) {
-    static const char VALID[] = "0123456789.";
-    return BOOL(memchr(VALID, c, strlen(VALID)));
-}
-
 static int _is_eof(char c) {
     return c == '\0';
-}
-
-static int _is_symbol(char c) {
-    static const char VALID[] = {
-        TOKT_NEWLINE,
-        TOKT_ADD,
-        TOKT_SUB,
-        TOKT_MULT,
-        TOKT_DIV,
-        TOKT_MOD,
-        TOKT_EQ,
-        TOKT_LPAREN,
-        TOKT_RPAREN,
-    };
-    return BOOL(memchr(VALID, c, sizeof VALID / sizeof *VALID));
 }
 
 static int _read_double(const char *data, double *result) {
@@ -138,7 +118,7 @@ static void token_base_init(Token *base, TokenType type, int bytes_read) {
     base->bytes_read = bytes_read;
 }
 
-static Token *token_new_symbol(const char *data) {
+static Token *token_try_new_symbol(const char *data) {
     TokenType type = TOKT_NULL;
     int bytes_read = _read_symbol(data, &type);
     if(!bytes_read)
@@ -148,14 +128,20 @@ static Token *token_new_symbol(const char *data) {
     return new;
 }
 
-static Token *token_new_numeric(const char *data) {
+static Token *token_try_new_numeric(const char *data) {
+    double value;
+    int bytes_read = _read_double(data, &value);
+    if(!bytes_read)
+        return NULL;
     NumericToken *new = malloc_or_die(sizeof *new);
-    int bytes_read = _read_double(data, &new->value);
+    new->value = value;
     token_base_init(&new->base, TOKT_NUMBER, bytes_read);
     return (Token *)new;
 }
 
-static Token *token_new_varname(const char *data) {
+static Token *token_try_new_identifier(const char *data) {
+    if(!_is_alpha(*data))
+        return NULL;
     IdentifierToken *new = malloc_or_die(sizeof *new + 32 * sizeof(*new->value));
     int bytes_read = _read_identifier(data, new->value, 32);
     token_base_init(&new->base, TOKT_IDENTIFIER, bytes_read);
@@ -168,12 +154,20 @@ static Token *_peek(const char *data) {
 
     if(_is_eof(*data))
         return NULL;
-    else if(_is_symbol(*data))
-        return token_new_symbol(data);
-    else if(_is_numeric(*data))
-        return token_new_numeric(data);
-    else if(_is_alpha(*data))
-        return token_new_varname(data);
+
+    Token *result = NULL;
+
+    result = token_try_new_symbol(data);
+    if(result)
+        return result;
+
+    result = token_try_new_numeric(data);
+    if(result)
+        return result;
+
+    result = token_try_new_identifier(data);
+    if(result)
+        return result;
 
     fprintf(stderr, "Lex error. Unhandled char: '%c'\n", *data);
     exit(-1);
