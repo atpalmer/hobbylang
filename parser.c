@@ -50,11 +50,11 @@ void parser_accept(Parser *this, TokenType token_type) {
     parser_next(this);
 }
 
-double parser_next_expr(Parser *this);
+double parser_expr(Parser *this);
 
 double parser_handle_assignment(Parser *this, const char *key) {
     parser_accept(this, TOKT_EQ);
-    double result = parser_next_expr(this);
+    double result = parser_expr(this);
     varmap_setval(&this->varmap, key, result);
     return result;
 }
@@ -75,31 +75,31 @@ double parser_handle_variable(Parser *this) {
     return result;
 }
 
-double parser_handle_parens(Parser *this) {
+double parser_paren_expr(Parser *this) {
     parser_accept(this, TOKT_LPAREN);
-    double result = parser_next_expr(this);
+    double result = parser_expr(this);
     parser_accept(this, TOKT_RPAREN);
     return result;
 }
 
-double parser_next_number(Parser *this) {
+double parser_number(Parser *this) {
     Token *curr = parser_curr(this);
     double result = token_number(curr);
     parser_accept(this, TOKT_NUMBER);
     return result;
 }
 
-double parser_next_atom(Parser *this) {
+double parser_atom(Parser *this) {
     Token *curr = parser_curr(this);
 
     switch(token_type(curr)) {
     case TOKT_NUMBER:
-        return parser_next_number(this);
+        return parser_number(this);
     case TOKT_SUB:
         parser_accept(this, TOKT_SUB);
-        return -parser_next_atom(this);
+        return -parser_atom(this);
     case TOKT_LPAREN:
-        return parser_handle_parens(this);
+        return parser_paren_expr(this);
     case TOKT_IDENTIFIER:
         return parser_handle_variable(this);
     default:
@@ -111,8 +111,8 @@ double parser_next_atom(Parser *this) {
     exit(-1);
 }
 
-double parser_next_term(Parser *this) {
-    double result = parser_next_atom(this);
+double parser_term(Parser *this) {
+    double result = parser_atom(this);
 
     for(;;) {
         Token *curr = parser_curr(this);
@@ -120,15 +120,15 @@ double parser_next_term(Parser *this) {
         switch(token_type(curr)) {
         case TOKT_MULT:
             parser_accept(this, TOKT_MULT);
-            result *= parser_next_atom(this);
+            result *= parser_atom(this);
             break;
         case TOKT_DIV:
             parser_accept(this, TOKT_DIV);
-            result /= parser_next_atom(this);
+            result /= parser_atom(this);
             break;
         case TOKT_MOD:
             parser_accept(this, TOKT_MOD);
-            result = fmod(result, parser_next_atom(this));
+            result = fmod(result, parser_atom(this));
             break;
         default:
             goto done;
@@ -139,8 +139,8 @@ done:
     return result;
 }
 
-double parser_next_expr(Parser *this) {
-    double result = parser_next_term(this);
+double parser_expr(Parser *this) {
+    double result = parser_term(this);
 
     for(;;) {
         Token *curr = parser_curr(this);
@@ -148,11 +148,11 @@ double parser_next_expr(Parser *this) {
         switch(token_type(curr)) {
         case TOKT_ADD:
             parser_accept(this, TOKT_ADD);
-            result += parser_next_term(this);
+            result += parser_term(this);
             break;
         case TOKT_SUB:
             parser_accept(this, TOKT_SUB);
-            result -= parser_next_term(this);
+            result -= parser_term(this);
             break;
         default:
             goto done;
@@ -163,12 +163,8 @@ done:
     return result;
 }
 
-double parser_next_line(Parser *this) {
-    double result = parser_next_expr(this);
+double parser_line(Parser *this) {
+    double result = parser_expr(this);
     parser_accept(this, TOKT_NEWLINE);
     return result;
-}
-
-int parser_has_next(Parser *this) {
-    return parser_curr(this) != NULL;
 }

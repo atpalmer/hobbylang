@@ -24,20 +24,6 @@ static void assert_equal_string(const char *left, const char *right) {
         fprintf(stderr, "ERROR: \"%s\" != \"%s\"\n", left, right);
 }
 
-static void assert_true(int val) {
-    if(val)
-        printf("OK: %d is true\n", val);
-    else
-        fprintf(stderr, "ERROR: %d is false\n", val);
-}
-
-static void assert_false(int val) {
-    if(!val)
-        printf("OK: %d is false\n", val);
-    else
-        fprintf(stderr, "ERROR: %d is true\n", val);
-}
-
 void test_lexer(void) {
     static const char *PROGRAM =
         "x = 2.0\n"
@@ -115,16 +101,14 @@ void test_parser(void) {
 
     Parser *parser = parser_new(PROGRAM);
 
-    assert_equal_double(parser_next_line(parser), 42);
-    assert_equal_double(parser_next_line(parser), 3);
-    assert_equal_double(parser_next_line(parser), 8);
-    assert_equal_double(parser_next_line(parser), 18);
-    assert_equal_double(parser_next_line(parser), 1);
-    assert_equal_double(parser_next_line(parser), 7);
-    assert_equal_double(parser_next_line(parser), 5);
-    assert_true(parser_has_next(parser));
-    assert_equal_double(parser_next_line(parser), 35);
-    assert_false(parser_has_next(parser));
+    assert_equal_double(parser_line(parser), 42);
+    assert_equal_double(parser_line(parser), 3);
+    assert_equal_double(parser_line(parser), 8);
+    assert_equal_double(parser_line(parser), 18);
+    assert_equal_double(parser_line(parser), 1);
+    assert_equal_double(parser_line(parser), 7);
+    assert_equal_double(parser_line(parser), 5);
+    assert_equal_double(parser_line(parser), 35);
 
     parser_free(parser);
 }

@@ -43,7 +43,7 @@ int main(int argc, const char **argv) {
         if(*line->buff == '\n')
             continue;
         parser_set_buff(parser, line->buff);
-        double value = parser_next_line(parser);
+        double value = parser_line(parser);
         printf("%f\n", value);
         if(fp == stdin)
             parser_setlinevar(parser, value);
