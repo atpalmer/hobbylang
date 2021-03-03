@@ -3,6 +3,7 @@
 #include <string.h>
 #include "error.h"
 #include "common.h"
+#include "syswrap.h"
 #include "lexer.h"
 
 TokenType token_type(Token *this) {
@@ -20,9 +21,7 @@ const char *token_varname(Token *this) {
 }
 
 Lexer *lexer_new(const char *data) {
-    Lexer *new = malloc(sizeof *new);
-    error_ensure_errno_ok();
-
+    Lexer *new = malloc_or_die(sizeof *new);
     new->data = data;
     new->len = strlen(data);
     new->pos = 0;
@@ -90,26 +89,20 @@ static void token_base_init(Token *base, TokenType type, int bytes_read) {
 }
 
 static Token *token_new_literal(const char *data) {
-    Token *new = malloc(sizeof *new);
-    error_ensure_errno_ok();
-
+    Token *new = malloc_or_die(sizeof *new);
     token_base_init(new, *data, 1);
     return new;
 }
 
 static Token *token_new_numeric(const char *data) {
-    NumericToken *new = malloc(sizeof *new);
-    error_ensure_errno_ok();
-
+    NumericToken *new = malloc_or_die(sizeof *new);
     int bytes_read = _read_double(data, &new->value);
     token_base_init(&new->base, TOKT_NUMBER, bytes_read);
     return (Token *)new;
 }
 
 static Token *token_new_varname(const char *data) {
-    IdentifierToken *new = malloc(sizeof *new + 32 * sizeof(*new->value));
-    error_ensure_errno_ok();
-
+    IdentifierToken *new = malloc_or_die(sizeof *new + 32 * sizeof(*new->value));
     int bytes_read = _read_identifier(data, new->value, 32);
     token_base_init(&new->base, TOKT_IDENTIFIER, bytes_read);
     return (Token *)new;
