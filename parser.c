@@ -93,9 +93,6 @@ double parser_atom(Parser *this) {
     switch(token_type(curr)) {
     case TOKT_NUMBER:
         return parser_number(this);
-    case TOKT_SUB:
-        parser_accept(this, TOKT_SUB);
-        return -parser_atom(this);
     case TOKT_LPAREN:
         return parser_paren_expr(this);
     case TOKT_IDENTIFIER:
@@ -109,8 +106,24 @@ double parser_atom(Parser *this) {
     exit(-1);
 }
 
+double parser_signed_atom(Parser *this) {
+    Token *curr = parser_curr(this);
+    switch(token_type(curr)) {
+    case TOKT_SUB:
+        parser_accept(this, TOKT_SUB);
+        return -parser_atom(this);
+    case TOKT_ADD:
+        parser_accept(this, TOKT_ADD);
+        return +parser_atom(this);
+    default:
+        break;
+    }
+
+    return parser_atom(this);
+}
+
 double parser_factor(Parser *this) {
-    double base = parser_atom(this);
+    double base = parser_signed_atom(this);
 
     Token *curr = parser_curr(this);
     switch(token_type(curr)) {
