@@ -45,8 +45,8 @@ void parser_next(Parser *this) {
 }
 
 void parser_accept(Parser *this, TokenType token_type) {
-    Token *peek = parser_curr(this);
-    error_ensure_token_type(peek, token_type);
+    Token *curr = parser_curr(this);
+    error_ensure_token_type(curr, token_type);
     parser_next(this);
 }
 
@@ -83,16 +83,16 @@ double parser_handle_parens(Parser *this) {
 }
 
 double parser_next_number(Parser *this) {
-    Token *peek = parser_curr(this);
-    double result = token_number(peek);
+    Token *curr = parser_curr(this);
+    double result = token_number(curr);
     parser_accept(this, TOKT_NUMBER);
     return result;
 }
 
 double parser_next_atom(Parser *this) {
-    Token *peek = parser_curr(this);
+    Token *curr = parser_curr(this);
 
-    switch(token_type(peek)) {
+    switch(token_type(curr)) {
     case TOKT_NUMBER:
         return parser_next_number(this);
     case TOKT_SUB:
@@ -107,7 +107,7 @@ double parser_next_atom(Parser *this) {
     }
 
     fprintf(stderr, "TokenType Error: Cannot parse atom. Position: %d. Found: '%c' (%d).\n",
-        this->lexer->pos, token_type(peek), token_type(peek));
+        this->lexer->pos, token_type(curr), token_type(curr));
     exit(-1);
 }
 
@@ -115,9 +115,9 @@ double parser_next_term(Parser *this) {
     double result = parser_next_atom(this);
 
     for(;;) {
-        Token *peek = parser_curr(this);
+        Token *curr = parser_curr(this);
 
-        switch(token_type(peek)) {
+        switch(token_type(curr)) {
         case TOKT_MULT:
             parser_accept(this, TOKT_MULT);
             result *= parser_next_atom(this);
@@ -143,9 +143,9 @@ double parser_next_expr(Parser *this) {
     double result = parser_next_term(this);
 
     for(;;) {
-        Token *peek = parser_curr(this);
+        Token *curr = parser_curr(this);
 
-        switch(token_type(peek)) {
+        switch(token_type(curr)) {
         case TOKT_ADD:
             parser_accept(this, TOKT_ADD);
             result += parser_next_term(this);
