@@ -77,7 +77,7 @@ static inline int _set_symbol(const char *op, TokenType t, TokenType *result) {
 
 static inline int _startswith(const char *str, const char *substr) {
     int len = strlen(substr);
-    return memcmp(str, substr, len) == 0;
+    return strncmp(str, substr, len) == 0;
 }
 
 static int _read_symbol(const char *data, TokenType *type) {
