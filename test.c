@@ -2,6 +2,7 @@
 #include <string.h>
 #include "parser.h"
 #include "lexer.h"
+#include "interpreter.h"
 
 static void assert_equal_int(int left, int right) {
     if(left == right)
@@ -134,20 +135,20 @@ void test_parser(void) {
 
     Parser *parser = parser_new(PROGRAM);
 
-    assert_equal_double(parser_line(parser), 42);
-    assert_equal_double(parser_line(parser), 3);
-    assert_equal_double(parser_line(parser), 8);
-    assert_equal_double(parser_line(parser), 18);
-    assert_equal_double(parser_line(parser), 1);
-    assert_equal_double(parser_line(parser), 7);
-    assert_equal_double(parser_line(parser), 5);
-    assert_equal_double(parser_line(parser), 35);
-    assert_equal_double(parser_line(parser), 3);
-    assert_equal_double(parser_line(parser), 48);
-    assert_equal_double(parser_line(parser), 1);
-    assert_equal_double(parser_line(parser), 1);
-    assert_equal_double(parser_line(parser), 1);
-    assert_equal_double(parser_line(parser), 0);
+    assert_equal_double(interpreter_invoke(parser), 42);
+    assert_equal_double(interpreter_invoke(parser), 3);
+    assert_equal_double(interpreter_invoke(parser), 8);
+    assert_equal_double(interpreter_invoke(parser), 18);
+    assert_equal_double(interpreter_invoke(parser), 1);
+    assert_equal_double(interpreter_invoke(parser), 7);
+    assert_equal_double(interpreter_invoke(parser), 5);
+    assert_equal_double(interpreter_invoke(parser), 35);
+    assert_equal_double(interpreter_invoke(parser), 3);
+    assert_equal_double(interpreter_invoke(parser), 48);
+    assert_equal_double(interpreter_invoke(parser), 1);
+    assert_equal_double(interpreter_invoke(parser), 1);
+    assert_equal_double(interpreter_invoke(parser), 1);
+    assert_equal_double(interpreter_invoke(parser), 0);
 
     parser_free(parser);
 }

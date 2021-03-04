@@ -1,6 +1,6 @@
 P=calc
 TESTP=test
-OBJECTS=lexer.o parser.o varmap.o syswrap.o
+OBJECTS=lexer.o parser.o ast.o interpreter.o varmap.o syswrap.o
 MAIN_OBJECTS=main.o
 TEST_OBJECTS=test.o
 CFLAGS=-Wall -Wextra -pedantic -g

@@ -226,8 +226,8 @@ done:
     return result;
 }
 
-double parser_line(Parser *this) {
+AstNode *parser_line(Parser *this) {
     double result = parser_expr(this);
     parser_accept(this, TOKT_NEWLINE);
-    return result;
+    return ast_double_new(result);
 }

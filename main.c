@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "syswrap.h"
 #include "parser.h"
+#include "interpreter.h"
 
 struct line {
     size_t size;
@@ -37,7 +38,7 @@ int main(int argc, const char **argv) {
         if(*line->buff == '\n')
             continue;
         parser_set_buff(parser, line->buff);
-        double value = parser_line(parser);
+        double value = interpreter_invoke(parser);
         printf("%f\n", value);
         if(fp == stdin)
             parser_setlinevar(parser, value);
