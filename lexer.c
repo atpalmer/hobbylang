@@ -70,74 +70,75 @@ static int _read_identifier(const char *data, char *buff, int bufflen) {
     return valp - buff;
 }
 
+static inline int _set_symbol(const char *op, TokenType t, TokenType *result) {
+    *result = t;
+    return strlen(op);
+}
+
+static inline int _startswith(const char *str, const char *substr) {
+    int len = strlen(substr);
+    return memcmp(str, substr, len) == 0;
+}
+
 static int _read_symbol(const char *data, TokenType *type) {
     if(*data == '\n') {
-        *type = TOKT_NEWLINE;
-        return 1;
+        return _set_symbol("\n", TOKT_NEWLINE, type);
     }
+
     if(*data == '+') {
-        *type = TOKT_ADD;
-        return 1;
+        return _set_symbol("+", TOKT_ADD, type);
     }
+
     if(*data == '-') {
-        *type = TOKT_SUB;
-        return 1;
+        return _set_symbol("-", TOKT_SUB, type);
     }
+
     if(*data == '*') {
-        if(memcmp(data, "**", 2) == 0) {
-            *type = TOKT_DUBSTAR;
-            return 2;
-        } else {
-            *type = TOKT_MULT;
-            return 1;
-        }
+        if(_startswith(data, "**"))
+            return _set_symbol("**", TOKT_DUBSTAR, type);
+        else
+            return _set_symbol("*", TOKT_MULT, type);
     }
+
     if(*data == '/') {
-        if(memcmp(data, "//", 2) == 0) {
-            *type = TOKT_FLOORDIV;
-            return 2;
-        } else {
-            *type = TOKT_DIV;
-            return 1;
-        }
+        if(_startswith(data, "//"))
+            return _set_symbol("//", TOKT_FLOORDIV, type);
+        else
+            return _set_symbol("/", TOKT_DIV, type);
     }
+
     if(*data == '%') {
-        *type = TOKT_MOD;
-        return 1;
+        return _set_symbol("%", TOKT_MOD, type);
     }
+
     if(*data == '=') {
-        if(memcmp(data, "==", 2) == 0) {
-            *type = TOKT_DUBEQ;
-            return 2;
-        } else {
-            *type = TOKT_EQ;
-            return 1;
-        }
+        if(_startswith(data, "=="))
+            return _set_symbol("==", TOKT_DUBEQ, type);
+        else
+            return _set_symbol("=", TOKT_EQ, type);
     }
+
     if(*data == '<') {
-        *type = TOKT_LT;
-        return 1;
+        return _set_symbol("<", TOKT_LT, type);
     }
+
     if(*data == '>') {
-        *type = TOKT_GT;
-        return 1;
+        return _set_symbol("<", TOKT_GT, type);
     }
+
     if(*data == '!') {
-        if(memcmp(data, "!=", 2) == 0) {
-            *type = TOKT_NE;
-            return 2;
-        } else {
-            *type = TOKT_NOT;
-            return 1;
-        }
+        if(_startswith(data, "!="))
+            return _set_symbol("!=", TOKT_NE, type);
+        else
+            return _set_symbol("!", TOKT_NOT, type);
     }
+
     if(*data == '(') {
-        *type = TOKT_LPAREN;
-        return 1;
+        return _set_symbol("(", TOKT_LPAREN, type);
     }
+
     if(*data == ')') {
-        *type = TOKT_RPAREN;
-        return 1;
+        return _set_symbol(")", TOKT_RPAREN, type);
     }
 
     *type = TOKT_NULL;
