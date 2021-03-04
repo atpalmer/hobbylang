@@ -81,65 +81,58 @@ static inline int _startswith(const char *str, const char *substr) {
 }
 
 static int _read_symbol(const char *data, TokenType *type) {
-    if(*data == '\n') {
+    switch(*data) {
+    case '\n':
         return _set_symbol("\n", TOKT_NEWLINE, type);
-    }
 
-    if(*data == '+') {
+    case '+':
         return _set_symbol("+", TOKT_ADD, type);
-    }
 
-    if(*data == '-') {
+    case '-':
         return _set_symbol("-", TOKT_SUB, type);
-    }
 
-    if(*data == '*') {
+    case '*':
         if(_startswith(data, "**"))
             return _set_symbol("**", TOKT_DUBSTAR, type);
         else
             return _set_symbol("*", TOKT_MULT, type);
-    }
 
-    if(*data == '/') {
+    case '/':
         if(_startswith(data, "//"))
             return _set_symbol("//", TOKT_FLOORDIV, type);
         else
             return _set_symbol("/", TOKT_DIV, type);
-    }
 
-    if(*data == '%') {
+    case '%':
         return _set_symbol("%", TOKT_MOD, type);
-    }
 
-    if(*data == '=') {
+    case '=':
         if(_startswith(data, "=="))
             return _set_symbol("==", TOKT_DUBEQ, type);
         else
             return _set_symbol("=", TOKT_EQ, type);
-    }
 
-    if(*data == '<') {
+    case '<':
         return _set_symbol("<", TOKT_LT, type);
-    }
 
-    if(*data == '>') {
+    case '>':
         return _set_symbol("<", TOKT_GT, type);
-    }
 
-    if(*data == '!') {
+    case '!':
         if(_startswith(data, "!="))
             return _set_symbol("!=", TOKT_NE, type);
         else
             return _set_symbol("!", TOKT_NOT, type);
-    }
 
-    if(*data == '(') {
+    case '(':
         return _set_symbol("(", TOKT_LPAREN, type);
-    }
 
-    if(*data == ')') {
+    case ')':
         return _set_symbol(")", TOKT_RPAREN, type);
-    }
+
+    default:
+        break;
+    };
 
     *type = TOKT_NULL;
     return 0;
