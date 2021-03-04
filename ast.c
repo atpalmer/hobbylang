@@ -1,13 +1,38 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include "ast.h"
 
 void ast_free(AstNode *this) {
+    switch(this->type) {
+    case ASTT_DOUBLE:
+        break;
+    case ASTT_BINOP:
+        ast_free(((AstBinOpNode *)this)->left);
+        ast_free(((AstBinOpNode *)this)->right);
+        break;
+    default:
+        fprintf(stderr, "Illegal AstNodeType: %d\n", this->type);
+        exit(-1);
+    }
     free(this);
+}
+
+void _base_init(AstNode *base, AstNodeType type) {
+    base->type = type;
 }
 
 AstNode *ast_double_new(double value) {
     AstDoubleNode *new = malloc(sizeof *new);
-    new->base.type = ASTT_DOUBLE;
+    _base_init(&new->base, ASTT_DOUBLE);
     new->value = value;
+    return (AstNode *)new;
+}
+
+AstNode *ast_binop_new(AstOp op, AstNode *left, AstNode *right) {
+    AstBinOpNode *new = malloc(sizeof *new);
+    _base_init(&new->base, ASTT_BINOP);
+    new->op = op;
+    new->left = left;
+    new->right = right;
     return (AstNode *)new;
 }

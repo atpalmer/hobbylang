@@ -195,6 +195,7 @@ done:
 }
 
 double parser_expr(Parser *this) {
+    /* TODO: replace with parser_expr_ast */
     double result = parser_sum(this);
 
     for(;;) {
@@ -226,8 +227,40 @@ done:
     return result;
 }
 
+AstNode *parser_expr_ast(Parser *this) {
+    AstNode *result = ast_double_new(parser_sum(this));
+
+    for(;;) {
+        Token *curr = parser_curr(this);
+
+        switch(token_type(curr)) {
+        case TOKT_DUBEQ:
+            parser_accept(this, TOKT_DUBEQ);
+            result = ast_binop_new(ASTOP_EQ, result, ast_double_new(parser_sum(this)));
+            break;
+        case TOKT_NE:
+            parser_accept(this, TOKT_NE);
+            result = ast_binop_new(ASTOP_NE, result, ast_double_new(parser_sum(this)));
+            break;
+        case TOKT_LT:
+            parser_accept(this, TOKT_LT);
+            result = ast_binop_new(ASTOP_LT, result, ast_double_new(parser_sum(this)));
+            break;
+        case TOKT_GT:
+            parser_accept(this, TOKT_GT);
+            result = ast_binop_new(ASTOP_GT, result, ast_double_new(parser_sum(this)));
+            break;
+        default:
+            goto done;
+        }
+    }
+
+done:
+    return result;
+}
+
 AstNode *parser_line(Parser *this) {
-    double result = parser_expr(this);
+    AstNode *result = parser_expr_ast(this);
     parser_accept(this, TOKT_NEWLINE);
-    return ast_double_new(result);
+    return result;
 }
