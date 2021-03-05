@@ -57,14 +57,14 @@ void test_lexer(void) {
     assert_equal_string(token_varname(curr), "x");
 
     curr = lexer_next(lexer);
-    assert_equal_int(token_type(curr), TOKT_MULT);
+    assert_equal_int(token_type(curr), TOKT_STAR);
 
     curr = lexer_next(lexer);
     assert_equal_int(token_type(curr), TOKT_NUMBER);
     assert_equal_double(token_number(curr), 1.5);
 
     curr = lexer_next(lexer);
-    assert_equal_int(token_type(curr), TOKT_ADD);
+    assert_equal_int(token_type(curr), TOKT_PLUS);
 
     curr = lexer_next(lexer);
     assert_equal_int(token_type(curr), TOKT_LPAREN);
@@ -74,7 +74,7 @@ void test_lexer(void) {
     assert_equal_double(token_number(curr), 123.0);
 
     curr = lexer_next(lexer);
-    assert_equal_int(token_type(curr), TOKT_SUB);
+    assert_equal_int(token_type(curr), TOKT_MINUS);
 
     curr = lexer_next(lexer);
     assert_equal_int(token_type(curr), TOKT_NUMBER);
@@ -91,7 +91,7 @@ void test_lexer(void) {
     assert_equal_string(token_varname(curr), "x");
 
     curr = lexer_next(lexer);
-    assert_equal_int(token_type(curr), TOKT_FLOORDIV);
+    assert_equal_int(token_type(curr), TOKT_DUBSLASH);
 
     curr = lexer_next(lexer);
     assert_equal_int(token_type(curr), TOKT_NUMBER);

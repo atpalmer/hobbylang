@@ -109,11 +109,11 @@ double parser_atom(Parser *this) {
 double parser_signed_atom(Parser *this) {
     Token *curr = parser_curr(this);
     switch(token_type(curr)) {
-    case TOKT_SUB:
-        parser_accept(this, TOKT_SUB);
+    case TOKT_MINUS:
+        parser_accept(this, TOKT_MINUS);
         return -parser_atom(this);
-    case TOKT_ADD:
-        parser_accept(this, TOKT_ADD);
+    case TOKT_PLUS:
+        parser_accept(this, TOKT_PLUS);
         return +parser_atom(this);
     default:
         break;
@@ -144,21 +144,21 @@ double parser_term(Parser *this) {
         Token *curr = parser_curr(this);
 
         switch(token_type(curr)) {
-        case TOKT_MULT:
-            parser_accept(this, TOKT_MULT);
+        case TOKT_STAR:
+            parser_accept(this, TOKT_STAR);
             result *= parser_factor(this);
             break;
-        case TOKT_DIV:
-            parser_accept(this, TOKT_DIV);
+        case TOKT_SLASH:
+            parser_accept(this, TOKT_SLASH);
             result /= parser_factor(this);
             break;
-        case TOKT_FLOORDIV:
-            parser_accept(this, TOKT_FLOORDIV);
+        case TOKT_DUBSLASH:
+            parser_accept(this, TOKT_DUBSLASH);
             result /= parser_factor(this);
             result = floor(result);
             break;
-        case TOKT_MOD:
-            parser_accept(this, TOKT_MOD);
+        case TOKT_PERCENT:
+            parser_accept(this, TOKT_PERCENT);
             result = fmod(result, parser_factor(this));
             break;
         default:
@@ -177,12 +177,12 @@ double parser_sum(Parser *this) {
         Token *curr = parser_curr(this);
 
         switch(token_type(curr)) {
-        case TOKT_ADD:
-            parser_accept(this, TOKT_ADD);
+        case TOKT_PLUS:
+            parser_accept(this, TOKT_PLUS);
             result += parser_term(this);
             break;
-        case TOKT_SUB:
-            parser_accept(this, TOKT_SUB);
+        case TOKT_MINUS:
+            parser_accept(this, TOKT_MINUS);
             result -= parser_term(this);
             break;
         default:
