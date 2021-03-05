@@ -148,9 +148,6 @@ void lexer_free(Lexer *this) {
 }
 
 static Token *_peek(const char *data) {
-    while(_is_whitespace(*data))
-        ++data;
-
     if(_is_eof(*data))
         return NULL;
 
@@ -175,11 +172,11 @@ static Token *_peek(const char *data) {
 Token *lexer_next(Lexer *this) {
     if(this->pos >= this->len)
         return NULL;
+    while(_is_whitespace(this->data[this->pos]))
+        ++this->pos;
     Token *peek = _peek(&this->data[this->pos]);
     if(!peek)
         return NULL;
-    while(_is_whitespace(this->data[this->pos]))
-        ++this->pos;
     this->pos += peek->bytes_read;
     return peek;
 }
