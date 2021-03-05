@@ -70,70 +70,41 @@ static int _read_identifier(const char *data, char *buff, int bufflen) {
     return valp - buff;
 }
 
-static inline int _set_symbol(const char *op, TokenType t, TokenType *result) {
-    *result = t;
-    return strlen(op);
-}
+struct symmap_entry {
+    const char *match;
+    TokenType type;
+};
 
-static inline int _startswith(const char *str, const char *substr) {
-    int len = strlen(substr);
-    return strncmp(str, substr, len) == 0;
-}
+static const struct symmap_entry symmap[] = {
+    {"\n",  TOKT_NEWLINE},
+    {"+",   TOKT_ADD},
+    {"-",   TOKT_SUB},
+    {"**",  TOKT_DUBSTAR},
+    {"*",   TOKT_MULT},
+    {"//",  TOKT_FLOORDIV},
+    {"/",   TOKT_DIV},
+    {"%",   TOKT_MOD},
+    {"==",  TOKT_DUBEQ},
+    {"=",   TOKT_EQ},
+    {"<",   TOKT_LT},
+    {">",   TOKT_GT},
+    {"!=",  TOKT_NE},
+    {"!",   TOKT_NOT},
+    {"(",   TOKT_LPAREN},
+    {")",   TOKT_RPAREN},
+    {0},
+};
 
 static int _read_symbol(const char *data, TokenType *type) {
-    switch(*data) {
-    case '\n':
-        return _set_symbol("\n", TOKT_NEWLINE, type);
-
-    case '+':
-        return _set_symbol("+", TOKT_ADD, type);
-
-    case '-':
-        return _set_symbol("-", TOKT_SUB, type);
-
-    case '*':
-        if(_startswith(data, "**"))
-            return _set_symbol("**", TOKT_DUBSTAR, type);
-        else
-            return _set_symbol("*", TOKT_MULT, type);
-
-    case '/':
-        if(_startswith(data, "//"))
-            return _set_symbol("//", TOKT_FLOORDIV, type);
-        else
-            return _set_symbol("/", TOKT_DIV, type);
-
-    case '%':
-        return _set_symbol("%", TOKT_MOD, type);
-
-    case '=':
-        if(_startswith(data, "=="))
-            return _set_symbol("==", TOKT_DUBEQ, type);
-        else
-            return _set_symbol("=", TOKT_EQ, type);
-
-    case '<':
-        return _set_symbol("<", TOKT_LT, type);
-
-    case '>':
-        return _set_symbol("<", TOKT_GT, type);
-
-    case '!':
-        if(_startswith(data, "!="))
-            return _set_symbol("!=", TOKT_NE, type);
-        else
-            return _set_symbol("!", TOKT_NOT, type);
-
-    case '(':
-        return _set_symbol("(", TOKT_LPAREN, type);
-
-    case ')':
-        return _set_symbol(")", TOKT_RPAREN, type);
-
-    default:
-        break;
-    };
-
+    const struct symmap_entry *entry = symmap;
+    while(entry->match) {
+        size_t len = strlen(entry->match);
+        if(strncmp(data, entry->match, len) == 0) {
+            *type = entry->type;
+            return len;
+        }
+        ++entry;
+    }
     *type = TOKT_NULL;
     return 0;
 }
