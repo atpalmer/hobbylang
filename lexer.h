@@ -39,7 +39,6 @@ typedef struct {
 
 typedef struct {
     const char *data;
-    int len;
     int pos;
 } Lexer;
 

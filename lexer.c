@@ -138,7 +138,6 @@ const char *token_varname(Token *this) {
 Lexer *lexer_new(const char *data) {
     Lexer *new = malloc_or_die(sizeof *new);
     new->data = data;
-    new->len = strlen(data);
     new->pos = 0;
     return new;
 }
@@ -148,19 +147,14 @@ void lexer_free(Lexer *this) {
 }
 
 static Token *_peek(const char *data) {
-    if(_is_eof(*data))
-        return NULL;
-
     Token *result = NULL;
 
     result = token_try_new_symbol(data);
     if(result)
         return result;
-
     result = token_try_new_numeric(data);
     if(result)
         return result;
-
     result = token_try_new_identifier(data);
     if(result)
         return result;
@@ -170,10 +164,10 @@ static Token *_peek(const char *data) {
 }
 
 Token *lexer_next(Lexer *this) {
-    if(this->pos >= this->len)
-        return NULL;
     while(_is_whitespace(this->data[this->pos]))
         ++this->pos;
+    if(_is_eof(this->data[this->pos]))
+        return NULL;
     Token *peek = _peek(&this->data[this->pos]);
     if(!peek)
         return NULL;
