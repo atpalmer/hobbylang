@@ -5,40 +5,6 @@
 #include "syswrap.h"
 #include "lexer.h"
 
-TokenType token_type(Token *this) {
-    return this ? this->type : TOKT_NULL;
-}
-
-Token *token_ensure_type(Token *this, TokenType expect) {
-    if(token_type(this) == expect)
-        return this;
-    fprintf(stderr, "TokenTypeError: Expected: %d. Received: %d\n",
-        expect, token_type(this));
-    exit(-1);
-}
-
-double token_number(Token *this) {
-    NumericToken *numtok = (NumericToken *)token_ensure_type(this, TOKT_NUMBER);
-    return numtok->value;
-}
-
-const char *token_varname(Token *this) {
-    IdentifierToken *idtok = (IdentifierToken *)token_ensure_type(this, TOKT_IDENTIFIER);
-    return idtok->value;
-}
-
-Lexer *lexer_new(const char *data) {
-    Lexer *new = malloc_or_die(sizeof *new);
-    new->data = data;
-    new->len = strlen(data);
-    new->pos = 0;
-    return new;
-}
-
-void lexer_free(Lexer *this) {
-    free(this);
-}
-
 static int _is_whitespace(char c) {
     static const char VALID[] = " \t";
     return !!memchr(VALID, c, strlen(VALID));
@@ -143,6 +109,44 @@ static Token *token_try_new_identifier(const char *data) {
     return (Token *)new;
 }
 
+void token_free(Token *this) {
+    free(this);
+}
+
+TokenType token_type(Token *this) {
+    return this ? this->type : TOKT_NULL;
+}
+
+Token *token_ensure_type(Token *this, TokenType expect) {
+    if(token_type(this) == expect)
+        return this;
+    fprintf(stderr, "TokenTypeError: Expected: %d. Received: %d\n",
+        expect, token_type(this));
+    exit(-1);
+}
+
+double token_number(Token *this) {
+    NumericToken *numtok = (NumericToken *)token_ensure_type(this, TOKT_NUMBER);
+    return numtok->value;
+}
+
+const char *token_varname(Token *this) {
+    IdentifierToken *idtok = (IdentifierToken *)token_ensure_type(this, TOKT_IDENTIFIER);
+    return idtok->value;
+}
+
+Lexer *lexer_new(const char *data) {
+    Lexer *new = malloc_or_die(sizeof *new);
+    new->data = data;
+    new->len = strlen(data);
+    new->pos = 0;
+    return new;
+}
+
+void lexer_free(Lexer *this) {
+    free(this);
+}
+
 static Token *_peek(const char *data) {
     while(_is_whitespace(*data))
         ++data;
@@ -178,8 +182,4 @@ Token *lexer_next(Lexer *this) {
         ++this->pos;
     this->pos += peek->bytes_read;
     return peek;
-}
-
-void token_free(Token *this) {
-    free(this);
 }
