@@ -171,6 +171,8 @@ done:
 }
 
 double parser_sum(Parser *this) {
+    /* TODO: replace with parser_expr_ast */
+
     double result = parser_term(this);
 
     for(;;) {
@@ -192,6 +194,30 @@ double parser_sum(Parser *this) {
 
 done:
     return result;
+}
+
+AstNode *parser_sum_ast(Parser *this) {
+    double result = parser_term(this);
+
+    for(;;) {
+        Token *curr = parser_curr(this);
+
+        switch(token_type(curr)) {
+        case TOKT_PLUS:
+            parser_accept(this, TOKT_PLUS);
+            result += parser_term(this);
+            break;
+        case TOKT_MINUS:
+            parser_accept(this, TOKT_MINUS);
+            result -= parser_term(this);
+            break;
+        default:
+            goto done;
+        }
+    }
+
+done:
+    return ast_double_new(result);
 }
 
 double parser_expr(Parser *this) {
@@ -228,7 +254,7 @@ done:
 }
 
 AstNode *parser_expr_ast(Parser *this) {
-    AstNode *result = ast_double_new(parser_sum(this));
+    AstNode *result = parser_sum_ast(this);
 
     for(;;) {
         Token *curr = parser_curr(this);
@@ -236,19 +262,19 @@ AstNode *parser_expr_ast(Parser *this) {
         switch(token_type(curr)) {
         case TOKT_DUBEQ:
             parser_accept(this, TOKT_DUBEQ);
-            result = ast_binop_new(ASTOP_EQ, result, ast_double_new(parser_sum(this)));
+            result = ast_binop_new(ASTOP_EQ, result, parser_sum_ast(this));
             break;
         case TOKT_NE:
             parser_accept(this, TOKT_NE);
-            result = ast_binop_new(ASTOP_NE, result, ast_double_new(parser_sum(this)));
+            result = ast_binop_new(ASTOP_NE, result, parser_sum_ast(this));
             break;
         case TOKT_LT:
             parser_accept(this, TOKT_LT);
-            result = ast_binop_new(ASTOP_LT, result, ast_double_new(parser_sum(this)));
+            result = ast_binop_new(ASTOP_LT, result, parser_sum_ast(this));
             break;
         case TOKT_GT:
             parser_accept(this, TOKT_GT);
-            result = ast_binop_new(ASTOP_GT, result, ast_double_new(parser_sum(this)));
+            result = ast_binop_new(ASTOP_GT, result, parser_sum_ast(this));
             break;
         default:
             goto done;
