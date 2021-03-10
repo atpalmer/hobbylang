@@ -137,6 +137,21 @@ double parser_factor(Parser *this) {
     return base;
 }
 
+AstNode *parser_factor_ast(Parser *this) {
+    double base = parser_signed_atom(this);
+
+    Token *curr = parser_curr(this);
+    switch(token_type(curr)) {
+    case TOKT_DUBSTAR:
+        parser_accept(this, TOKT_DUBSTAR);
+        return ast_double_new(pow(base, parser_factor(this)));
+    default:
+        break;
+    }
+
+    return ast_double_new(base);
+}
+
 double parser_term(Parser *this) {
     double result = parser_factor(this);
 
@@ -171,7 +186,7 @@ done:
 }
 
 AstNode *parser_term_ast(Parser *this) {
-    AstNode *result = ast_double_new(parser_factor(this));
+    AstNode *result = parser_factor_ast(this);
 
     for(;;) {
         Token *curr = parser_curr(this);
@@ -179,19 +194,19 @@ AstNode *parser_term_ast(Parser *this) {
         switch(token_type(curr)) {
         case TOKT_STAR:
             parser_accept(this, TOKT_STAR);
-            result = ast_binop_new(ASTOP_MULT, result, ast_double_new(parser_factor(this)));
+            result = ast_binop_new(ASTOP_MULT, result, parser_factor_ast(this));
             break;
         case TOKT_SLASH:
             parser_accept(this, TOKT_SLASH);
-            result = ast_binop_new(ASTOP_DIV, result, ast_double_new(parser_factor(this)));
+            result = ast_binop_new(ASTOP_DIV, result, parser_factor_ast(this));
             break;
         case TOKT_DUBSLASH:
             parser_accept(this, TOKT_DUBSLASH);
-            result = ast_binop_new(ASTOP_FLOORDIV, result, ast_double_new(parser_factor(this)));
+            result = ast_binop_new(ASTOP_FLOORDIV, result, parser_factor_ast(this));
             break;
         case TOKT_PERCENT:
             parser_accept(this, TOKT_PERCENT);
-            result = ast_binop_new(ASTOP_MOD, result, ast_double_new(parser_factor(this)));
+            result = ast_binop_new(ASTOP_MOD, result, parser_factor_ast(this));
             break;
         default:
             goto done;
