@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "ast.h"
@@ -32,6 +33,12 @@ double _interpret_ast(AstNode *ast) {
         }
         if(node->op == ASTOP_DIV) {
             return _interpret_ast(node->left) / _interpret_ast(node->right);
+        }
+        if(node->op == ASTOP_FLOORDIV) {
+            return floor(_interpret_ast(node->left) / _interpret_ast(node->right));
+        }
+        if(node->op == ASTOP_MOD) {
+            return fmod(_interpret_ast(node->left), _interpret_ast(node->right));
         }
     }
 
