@@ -138,18 +138,18 @@ double parser_factor(Parser *this) {
 }
 
 AstNode *parser_factor_ast(Parser *this) {
-    double base = parser_signed_atom(this);
+    AstNode *base = ast_double_new(parser_signed_atom(this));
 
     Token *curr = parser_curr(this);
     switch(token_type(curr)) {
     case TOKT_DUBSTAR:
         parser_accept(this, TOKT_DUBSTAR);
-        return ast_double_new(pow(base, parser_factor(this)));
+        return ast_binop_new(ASTOP_POW, base, parser_factor_ast(this));
     default:
         break;
     }
 
-    return ast_double_new(base);
+    return base;
 }
 
 double parser_term(Parser *this) {

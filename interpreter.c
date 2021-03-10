@@ -40,6 +40,9 @@ double _interpret_ast(AstNode *ast) {
         if(node->op == ASTOP_MOD) {
             return fmod(_interpret_ast(node->left), _interpret_ast(node->right));
         }
+        if(node->op == ASTOP_POW) {
+            return pow(_interpret_ast(node->left), _interpret_ast(node->right));
+        }
     }
 
     fprintf(stderr, "Cannot interpret AstNode. Type: %d\n", ast->type);

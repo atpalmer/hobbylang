@@ -12,6 +12,7 @@ typedef enum {
     ASTOP_DIV,
     ASTOP_FLOORDIV,
     ASTOP_MOD,
+    ASTOP_POW,
 } AstOp;
 
 typedef enum {
