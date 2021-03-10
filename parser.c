@@ -122,6 +122,22 @@ double parser_signed_atom(Parser *this) {
     return parser_atom(this);
 }
 
+AstNode *parser_signed_atom_ast(Parser *this) {
+    Token *curr = parser_curr(this);
+    switch(token_type(curr)) {
+    case TOKT_MINUS:
+        parser_accept(this, TOKT_MINUS);
+        return ast_double_new(-parser_atom(this));
+    case TOKT_PLUS:
+        parser_accept(this, TOKT_PLUS);
+        return ast_double_new(+parser_atom(this));
+    default:
+        break;
+    }
+
+    return ast_double_new(parser_atom(this));
+}
+
 double parser_factor(Parser *this) {
     double base = parser_signed_atom(this);
 
@@ -138,7 +154,7 @@ double parser_factor(Parser *this) {
 }
 
 AstNode *parser_factor_ast(Parser *this) {
-    AstNode *base = ast_double_new(parser_signed_atom(this));
+    AstNode *base = parser_signed_atom_ast(this);
 
     Token *curr = parser_curr(this);
     switch(token_type(curr)) {
