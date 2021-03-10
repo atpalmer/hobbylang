@@ -21,6 +21,18 @@ double _interpret_ast(AstNode *ast) {
         if(node->op == ASTOP_GT) {
             return _interpret_ast(node->left) > _interpret_ast(node->right);
         }
+        if(node->op == ASTOP_PLUS) {
+            return _interpret_ast(node->left) + _interpret_ast(node->right);
+        }
+        if(node->op == ASTOP_MINUS) {
+            return _interpret_ast(node->left) - _interpret_ast(node->right);
+        }
+        if(node->op == ASTOP_MULT) {
+            return _interpret_ast(node->left) * _interpret_ast(node->right);
+        }
+        if(node->op == ASTOP_DIV) {
+            return _interpret_ast(node->left) / _interpret_ast(node->right);
+        }
     }
 
     fprintf(stderr, "Cannot interpret AstNode. Type: %d\n", ast->type);

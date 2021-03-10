@@ -6,6 +6,10 @@ typedef enum {
     ASTOP_NE,
     ASTOP_GT,
     ASTOP_LT,
+    ASTOP_PLUS,
+    ASTOP_MINUS,
+    ASTOP_MULT,
+    ASTOP_DIV,
 } AstOp;
 
 typedef enum {
