@@ -14,6 +14,7 @@ typedef enum {
     ASTOP_FLOORDIV,
     ASTOP_MOD,
     ASTOP_POW,
+    ASTOP_ASSIGN,
 
     /* Unary Ops */
     ASTOP_UPLUS,
@@ -22,6 +23,7 @@ typedef enum {
 
 typedef enum {
     ASTT_DOUBLE,
+    ASTT_ID,
     ASTT_BINOP,
     ASTT_UOP,
 } AstNodeType;
@@ -34,6 +36,12 @@ typedef struct {
     AstNode base;
     double value;
 } AstDoubleNode;
+
+typedef struct {
+    AstNode base;
+    int len;
+    char value[];
+} AstIdentifierNode;
 
 typedef struct {
     AstNode base;
@@ -50,6 +58,7 @@ typedef struct {
 
 void ast_free(AstNode *this);
 AstNode *ast_double_new(double value);
+AstNode *ast_id_new(const char *value, int len);
 AstNode *ast_binop_new(AstOp op, AstNode *left, AstNode *right);
 AstNode *ast_uop_new(AstOp op, AstNode *operand);
 

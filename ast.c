@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "ast.h"
 
 void ast_free(AstNode *this) {
     switch(this->type) {
     case ASTT_DOUBLE:
+        break;
+    case ASTT_ID:
         break;
     case ASTT_BINOP:
         ast_free(((AstBinOpNode *)this)->left);
@@ -28,6 +31,14 @@ AstNode *ast_double_new(double value) {
     AstDoubleNode *new = malloc(sizeof *new);
     _base_init(&new->base, ASTT_DOUBLE);
     new->value = value;
+    return (AstNode *)new;
+}
+
+AstNode *ast_id_new(const char *value, int len) {
+    AstIdentifierNode *new = malloc(sizeof *new + sizeof *new->value * len);
+    _base_init(&new->base, ASTT_ID);
+    new->len = len;
+    memcpy(new->value, value, len);
     return (AstNode *)new;
 }
 
