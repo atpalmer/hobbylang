@@ -2,6 +2,7 @@
 #define AST_H
 
 typedef enum {
+    /* Binary Ops */
     ASTOP_EQ,
     ASTOP_NE,
     ASTOP_GT,
@@ -13,11 +14,16 @@ typedef enum {
     ASTOP_FLOORDIV,
     ASTOP_MOD,
     ASTOP_POW,
+
+    /* Unary Ops */
+    ASTOP_UPLUS,
+    ASTOP_UMINUS,
 } AstOp;
 
 typedef enum {
     ASTT_DOUBLE,
     ASTT_BINOP,
+    ASTT_UOP,
 } AstNodeType;
 
 typedef struct {
@@ -36,8 +42,15 @@ typedef struct {
     AstNode *right;
 } AstBinOpNode;
 
+typedef struct {
+    AstNode base;
+    AstOp op;
+    AstNode *operand;
+} AstUnaryOpNode;
+
 void ast_free(AstNode *this);
 AstNode *ast_double_new(double value);
 AstNode *ast_binop_new(AstOp op, AstNode *left, AstNode *right);
+AstNode *ast_uop_new(AstOp op, AstNode *operand);
 
 #endif

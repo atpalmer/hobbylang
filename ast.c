@@ -36,3 +36,11 @@ AstNode *ast_binop_new(AstOp op, AstNode *left, AstNode *right) {
     new->right = right;
     return (AstNode *)new;
 }
+
+AstNode *ast_uop_new(AstOp op, AstNode *operand) {
+    AstUnaryOpNode *new = malloc(sizeof *new);
+    _base_init(&new->base, ASTT_UOP);
+    new->op = op;
+    new->operand = operand;
+    return (AstNode *)new;
+}
