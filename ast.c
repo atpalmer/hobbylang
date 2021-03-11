@@ -10,6 +10,9 @@ void ast_free(AstNode *this) {
         ast_free(((AstBinOpNode *)this)->left);
         ast_free(((AstBinOpNode *)this)->right);
         break;
+    case ASTT_UOP:
+        ast_free(((AstUnaryOpNode *)this)->operand);
+        break;
     default:
         fprintf(stderr, "Illegal AstNodeType: %d\n", this->type);
         exit(-1);

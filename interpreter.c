@@ -44,6 +44,15 @@ double _interpret_ast(AstNode *ast) {
             return pow(_interpret_ast(node->left), _interpret_ast(node->right));
         }
     }
+    if(ast->type == ASTT_UOP) {
+        AstUnaryOpNode *node = (AstUnaryOpNode *)ast;
+        if(node->op == ASTOP_UPLUS) {
+            return +_interpret_ast(node->operand);
+        }
+        if(node->op == ASTOP_UMINUS) {
+            return -_interpret_ast(node->operand);
+        }
+    }
 
     fprintf(stderr, "Cannot interpret AstNode. Type: %d\n", ast->type);
     exit(-1);

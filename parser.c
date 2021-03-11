@@ -127,10 +127,10 @@ AstNode *parser_signed_atom_ast(Parser *this) {
     switch(token_type(curr)) {
     case TOKT_MINUS:
         parser_accept(this, TOKT_MINUS);
-        return ast_double_new(-parser_atom(this));
+        return ast_uop_new(ASTOP_UMINUS, ast_double_new(parser_atom(this)));
     case TOKT_PLUS:
         parser_accept(this, TOKT_PLUS);
-        return ast_double_new(+parser_atom(this));
+        return ast_uop_new(ASTOP_UPLUS, ast_double_new(parser_atom(this)));
     default:
         break;
     }
