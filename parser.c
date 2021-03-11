@@ -50,6 +50,7 @@ void parser_accept(Parser *this, TokenType token_type) {
 }
 
 double parser_expr(Parser *this);
+AstNode *parser_expr_ast(Parser *this);
 
 double parser_handle_assignment(Parser *this, const char *key) {
     parser_accept(this, TOKT_EQ);
@@ -76,6 +77,13 @@ double parser_handle_variable(Parser *this) {
 double parser_paren_expr(Parser *this) {
     parser_accept(this, TOKT_LPAREN);
     double result = parser_expr(this);
+    parser_accept(this, TOKT_RPAREN);
+    return result;
+}
+
+AstNode *parser_paren_expr_ast(Parser *this) {
+    parser_accept(this, TOKT_LPAREN);
+    AstNode *result = parser_expr_ast(this);
     parser_accept(this, TOKT_RPAREN);
     return result;
 }
@@ -113,7 +121,7 @@ AstNode *parser_atom_ast(Parser *this) {
     case TOKT_NUMBER:
         return ast_double_new(parser_number(this));
     case TOKT_LPAREN:
-        return ast_double_new(parser_paren_expr(this));
+        return parser_paren_expr_ast(this);
     case TOKT_IDENTIFIER:
         return ast_double_new(parser_handle_variable(this));
     default:
