@@ -106,6 +106,25 @@ double parser_atom(Parser *this) {
     exit(-1);
 }
 
+AstNode *parser_atom_ast(Parser *this) {
+    Token *curr = parser_curr(this);
+
+    switch(token_type(curr)) {
+    case TOKT_NUMBER:
+        return ast_double_new(parser_number(this));
+    case TOKT_LPAREN:
+        return ast_double_new(parser_paren_expr(this));
+    case TOKT_IDENTIFIER:
+        return ast_double_new(parser_handle_variable(this));
+    default:
+        break;
+    }
+
+    fprintf(stderr, "TokenType Error: Cannot parse atom. Position: %d. Found: '%c' (%d).\n",
+        this->lexer->pos, token_type(curr), token_type(curr));
+    exit(-1);
+}
+
 double parser_signed_atom(Parser *this) {
     Token *curr = parser_curr(this);
     switch(token_type(curr)) {
@@ -127,15 +146,15 @@ AstNode *parser_signed_atom_ast(Parser *this) {
     switch(token_type(curr)) {
     case TOKT_MINUS:
         parser_accept(this, TOKT_MINUS);
-        return ast_uop_new(ASTOP_UMINUS, ast_double_new(parser_atom(this)));
+        return ast_uop_new(ASTOP_UMINUS, parser_atom_ast(this));
     case TOKT_PLUS:
         parser_accept(this, TOKT_PLUS);
-        return ast_uop_new(ASTOP_UPLUS, ast_double_new(parser_atom(this)));
+        return ast_uop_new(ASTOP_UPLUS, parser_atom_ast(this));
     default:
         break;
     }
 
-    return ast_double_new(parser_atom(this));
+    return parser_atom_ast(this);
 }
 
 double parser_factor(Parser *this) {
