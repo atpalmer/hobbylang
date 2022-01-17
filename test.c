@@ -133,24 +133,24 @@ void test_parser(void) {
             "2 + 2 != 4\n"
             ;
 
-    Parser *parser = parser_new(PROGRAM);
+    Interpreter *interp = interpreter_new(PROGRAM);
 
-    assert_equal_double(interpreter_invoke(parser), 42);
-    assert_equal_double(interpreter_invoke(parser), 3);
-    assert_equal_double(interpreter_invoke(parser), 8);
-    assert_equal_double(interpreter_invoke(parser), 18);
-    assert_equal_double(interpreter_invoke(parser), 1);
-    assert_equal_double(interpreter_invoke(parser), 7);
-    assert_equal_double(interpreter_invoke(parser), 5);
-    assert_equal_double(interpreter_invoke(parser), 35);
-    assert_equal_double(interpreter_invoke(parser), 3);
-    assert_equal_double(interpreter_invoke(parser), 48);
-    assert_equal_double(interpreter_invoke(parser), 1);
-    assert_equal_double(interpreter_invoke(parser), 1);
-    assert_equal_double(interpreter_invoke(parser), 1);
-    assert_equal_double(interpreter_invoke(parser), 0);
+    assert_equal_double(interpreter_parse_line(interp), 42);
+    assert_equal_double(interpreter_parse_line(interp), 3);
+    assert_equal_double(interpreter_parse_line(interp), 8);
+    assert_equal_double(interpreter_parse_line(interp), 18);
+    assert_equal_double(interpreter_parse_line(interp), 1);
+    assert_equal_double(interpreter_parse_line(interp), 7);
+    assert_equal_double(interpreter_parse_line(interp), 5);
+    assert_equal_double(interpreter_parse_line(interp), 35);
+    assert_equal_double(interpreter_parse_line(interp), 3);
+    assert_equal_double(interpreter_parse_line(interp), 48);
+    assert_equal_double(interpreter_parse_line(interp), 1);
+    assert_equal_double(interpreter_parse_line(interp), 1);
+    assert_equal_double(interpreter_parse_line(interp), 1);
+    assert_equal_double(interpreter_parse_line(interp), 0);
 
-    parser_free(parser);
+    interpreter_free(interp);
 }
 
 int main(void) {

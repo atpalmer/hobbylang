@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include "syswrap.h"
-#include "parser.h"
 #include "interpreter.h"
 
 struct line {
@@ -28,7 +27,7 @@ int main(int argc, const char **argv) {
     FILE *fp = argc < 2 ? stdin : fopen_or_die(argv[1], "r");
 
     struct line *line = line_new();
-    Parser *parser = parser_new("");
+    Interpreter *interp = interpreter_new("");
 
     for(;;) {
         if(fp == stdin)
@@ -37,16 +36,14 @@ int main(int argc, const char **argv) {
             break;
         if(*line->buff == '\n')
             continue;
-        parser_set_buff(parser, line->buff);
-        double value = interpreter_invoke(parser);
+        interpreter_set_buff(interp, line->buff);
+        double value = interpreter_parse_line(interp);
         printf("%f\n", value);
-        if(fp == stdin)
-            parser_setlinevar(parser, value);
     }
 
     printf("\n");
-    parser_free(parser);
     line_free(line);
+    interpreter_free(interp);
     if(fp != stdin)
         fclose(fp);
     return 0;

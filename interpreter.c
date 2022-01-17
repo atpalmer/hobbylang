@@ -4,6 +4,8 @@
 #include "ast.h"
 #include "varmap.h"
 #include "interpreter.h"
+#include "parser.h"
+#include "syswrap.h"
 
 double _interpret_ast(AstNode *ast, VarEntry **vars) {
     if(ast->type == ASTT_DOUBLE) {
@@ -72,9 +74,27 @@ double _interpret_ast(AstNode *ast, VarEntry **vars) {
     exit(-1);
 }
 
-double interpreter_invoke(Parser *parser) {
-    AstNode *ast = parser_line(parser);
-    double result = _interpret_ast(ast, &parser->varmap);
+Interpreter *interpreter_new(const char *program) {
+    Interpreter *new = malloc_or_die(sizeof *new);
+    new->parser = parser_new(program);
+    new->varmap = NULL;
+    return new;
+}
+
+void interpreter_free(Interpreter *this) {
+    parser_free(this->parser);
+    varmap_free(this->varmap);
+    free(this);
+}
+
+double interpreter_parse_line(Interpreter *this) {
+    AstNode *ast = parser_line(this->parser);
+    double result = _interpret_ast(ast, &this->varmap);
     ast_free(ast);
+    varmap_setval(&this->varmap, "_", result);
     return result;
+}
+
+void interpreter_set_buff(Interpreter *this, const char *buff) {
+    parser_set_buff(this->parser, buff);
 }
