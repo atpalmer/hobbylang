@@ -82,15 +82,11 @@ AstNode *parser_paren_expr_ast(Parser *this) {
     return result;
 }
 
-double parser_number(Parser *this) {
+AstNode *parser_number_ast(Parser *this) {
     Token *curr = parser_curr(this);
     double result = token_number(curr);
     parser_accept(this, TOKT_NUMBER);
-    return result;
-}
-
-AstNode *parser_number_ast(Parser *this) {
-    return ast_double_new(parser_number(this));
+    return ast_double_new(result);
 }
 
 AstNode *parser_atom_ast(Parser *this) {
