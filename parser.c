@@ -1,7 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
 #include "error.h"
 #include "syswrap.h"
 #include "lexer.h"
