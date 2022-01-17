@@ -8,7 +8,6 @@
 typedef struct {
     Lexer *lexer;
     Token *curr;
-    VarEntry *varmap;
 } Parser;
 
 Parser *parser_new(const char *program);

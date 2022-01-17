@@ -4,15 +4,10 @@
 #include "lexer.h"
 #include "parser.h"
 
-void parser_setlinevar(Parser *this, double value) {
-    varmap_setval(&this->varmap, "_", value);
-}
-
 Parser *parser_new(const char *program) {
     Parser *new = malloc_or_die(sizeof *new);
     new->lexer = lexer_new(program);
     new->curr = NULL;
-    new->varmap = NULL;
     return new;
 }
 
@@ -24,7 +19,6 @@ void parser_set_buff(Parser *this, const char *program) {
 void parser_free(Parser *this) {
     lexer_free(this->lexer);
     token_free(this->curr);
-    varmap_free(this->varmap);
     free(this);
 }
 
