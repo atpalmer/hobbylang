@@ -5,9 +5,12 @@
 #include "varmap.h"
 #include "interpreter.h"
 
-double _interpret_ast(AstNode *ast, VarEntry *vars) {
+double _interpret_ast(AstNode *ast, VarEntry **vars) {
     if(ast->type == ASTT_DOUBLE) {
         return ((AstDoubleNode *)ast)->value;
+    }
+    if(ast->type == ASTT_ID) {
+        return varmap_getval(*vars, ((AstIdentifierNode *)ast)->value);
     }
     if(ast->type == ASTT_BINOP) {
         AstBinOpNode *node = (AstBinOpNode *)ast;
@@ -44,6 +47,16 @@ double _interpret_ast(AstNode *ast, VarEntry *vars) {
         if(node->op == ASTOP_POW) {
             return pow(_interpret_ast(node->left, vars), _interpret_ast(node->right, vars));
         }
+        if(node->op == ASTOP_ASSIGN) {
+            if(node->left->type != ASTT_ID) {
+                fprintf(stderr, "Cannot assign to AstNode type: %d\n", node->left->type);
+                exit(-1);
+            }
+            const char *id = ((AstIdentifierNode *)node->left)->value;
+            double val = _interpret_ast(node->right, vars);
+            varmap_setval(vars, id, val);
+            return val;
+        }
     }
     if(ast->type == ASTT_UOP) {
         AstUnaryOpNode *node = (AstUnaryOpNode *)ast;
@@ -61,7 +74,7 @@ double _interpret_ast(AstNode *ast, VarEntry *vars) {
 
 double interpreter_invoke(Parser *parser) {
     AstNode *ast = parser_line(parser);
-    double result = _interpret_ast(ast, parser->varmap);
+    double result = _interpret_ast(ast, &parser->varmap);
     ast_free(ast);
     return result;
 }

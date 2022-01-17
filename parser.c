@@ -59,6 +59,15 @@ double parser_handle_assignment(Parser *this, const char *key) {
     return result;
 }
 
+AstNode *parser_handle_assignment_ast(Parser *this, const char *key) {
+    parser_accept(this, TOKT_EQ);
+
+    AstNode *id = ast_id_new(key);
+    AstNode *value = parser_expr_ast(this);
+
+    return ast_binop_new(ASTOP_ASSIGN, id, value);
+}
+
 double parser_handle_variable(Parser *this) {
     Token *var = parser_curr(this);
     char *key = strdup_or_die(token_varname(var));
@@ -82,8 +91,8 @@ AstNode *parser_handle_variable_ast(Parser *this) {
     Token *eq = parser_curr(this);
 
     AstNode *result = token_type(eq) == TOKT_EQ
-        ? ast_double_new(parser_handle_assignment(this, key))
-        : ast_double_new(varmap_getval(this->varmap, key));
+        ? parser_handle_assignment_ast(this, key)
+        : ast_id_new(key);
 
     free(key);
     return result;

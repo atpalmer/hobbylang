@@ -34,11 +34,10 @@ AstNode *ast_double_new(double value) {
     return (AstNode *)new;
 }
 
-AstNode *ast_id_new(const char *value, int len) {
-    AstIdentifierNode *new = malloc(sizeof *new + sizeof *new->value * len);
+AstNode *ast_id_new(const char *value) {
+    AstIdentifierNode *new = malloc(sizeof *new + (sizeof(char) * (strlen(value) + 1)));
     _base_init(&new->base, ASTT_ID);
-    new->len = len;
-    memcpy(new->value, value, len);
+    strcpy(new->value, value);
     return (AstNode *)new;
 }
 
