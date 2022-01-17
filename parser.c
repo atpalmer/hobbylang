@@ -74,6 +74,10 @@ double parser_handle_variable(Parser *this) {
     return result;
 }
 
+AstNode *parser_handle_variable_ast(Parser *this) {
+    return ast_double_new(parser_handle_variable(this));
+}
+
 double parser_paren_expr(Parser *this) {
     parser_accept(this, TOKT_LPAREN);
     double result = parser_expr(this);
@@ -93,6 +97,10 @@ double parser_number(Parser *this) {
     double result = token_number(curr);
     parser_accept(this, TOKT_NUMBER);
     return result;
+}
+
+AstNode *parser_number_ast(Parser *this) {
+    return ast_double_new(parser_number(this));
 }
 
 double parser_atom(Parser *this) {
@@ -119,11 +127,11 @@ AstNode *parser_atom_ast(Parser *this) {
 
     switch(token_type(curr)) {
     case TOKT_NUMBER:
-        return ast_double_new(parser_number(this));
+        return parser_number_ast(this);
     case TOKT_LPAREN:
         return parser_paren_expr_ast(this);
     case TOKT_IDENTIFIER:
-        return ast_double_new(parser_handle_variable(this));
+        return parser_handle_variable_ast(this);
     default:
         break;
     }
