@@ -5,35 +5,14 @@
 #include "syswrap.h"
 #include "lexer.h"
 
-static int _is_whitespace(char c) {
+static int _is_whitespace(int c) {
     static const char VALID[] = " \t";
     return !!memchr(VALID, c, strlen(VALID));
 }
 
-static int _is_alpha(char c) {
+static int _is_alpha(int c) {
     static const char VALID[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_";
     return !!memchr(VALID, c, strlen(VALID));
-}
-
-static int _is_eof(char c) {
-    return c == '\0';
-}
-
-static int _read_double(const char *data, double *result) {
-    const char *p = data;
-    *result = strtod(data, (void *)&p);
-    return p - data;
-}
-
-static int _read_identifier(const char *data, char *buff, int bufflen) {
-    char *valp = buff;
-    while(_is_alpha(*data)) {
-        *(valp++) = *data++;
-        if(valp - buff >= bufflen - 1)
-            break;
-    }
-    *valp = '\0';
-    return valp - buff;
 }
 
 struct symmap_entry {
@@ -60,14 +39,17 @@ static const struct symmap_entry symmap[] = {
     {0},
 };
 
-static int _read_symbol(const char *data, TokenType *type) {
-    const struct symmap_entry *entry = symmap;
+static int _read_symbol(FILE *stream, TokenType *type) {
+    const struct symmap_entry *entry = &symmap[0];
     while(entry->match) {
         size_t len = strlen(entry->match);
-        if(strncmp(data, entry->match, len) == 0) {
+        char buff[len];
+        size_t bytes_read = fread(&buff, 1, len, stream);
+        if(bytes_read == len && strncmp(buff, entry->match, bytes_read) == 0) {
             *type = entry->type;
-            return len;
+            return bytes_read;
         }
+        fseek(stream, -bytes_read, SEEK_CUR);
         ++entry;
     }
     *type = TOKT_NULL;
@@ -79,9 +61,9 @@ static void token_base_init(Token *base, TokenType type, int bytes_read) {
     base->bytes_read = bytes_read;
 }
 
-static Token *token_try_new_symbol(const char *data) {
+static Token *token_try_new_symbol(FILE *stream) {
     TokenType type = TOKT_NULL;
-    int bytes_read = _read_symbol(data, &type);
+    int bytes_read = _read_symbol(stream, &type);
     if(!bytes_read)
         return NULL;
     Token *new = malloc_or_die(sizeof *new);
@@ -89,9 +71,9 @@ static Token *token_try_new_symbol(const char *data) {
     return new;
 }
 
-static Token *token_try_new_numeric(const char *data) {
+static Token *token_try_new_numeric(FILE *stream) {
     double value;
-    int bytes_read = _read_double(data, &value);
+    int bytes_read = fscanf(stream, "%lf", &value);
     if(!bytes_read)
         return NULL;
     NumericToken *new = malloc_or_die(sizeof *new);
@@ -100,11 +82,28 @@ static Token *token_try_new_numeric(const char *data) {
     return (Token *)new;
 }
 
-static Token *token_try_new_identifier(const char *data) {
-    if(!_is_alpha(*data))
+static Token *token_try_new_identifier(FILE *stream) {
+    int c = getc(stream);
+
+    if(!_is_alpha(c)) {
+        ungetc(c, stream);
         return NULL;
+    }
+
     IdentifierToken *new = malloc_or_die(sizeof *new + 32 * sizeof(*new->value));
-    int bytes_read = _read_identifier(data, new->value, 32);
+
+    char *w = new->value;
+    while(w - new->value < 32) {
+        *w++ = c;
+        c = getc(stream);
+        if(!_is_alpha(c)) {
+            ungetc(c, stream);
+            break;
+        }
+    }
+    *w = '\0';
+
+    int bytes_read = w - new->value;  /* trailing '\0' not included */
     token_base_init(&new->base, TOKT_IDENTIFIER, bytes_read);
     return (Token *)new;
 }
@@ -135,42 +134,43 @@ const char *token_varname(Token *this) {
     return idtok->value;
 }
 
-Lexer *lexer_new(const char *data) {
+Lexer *lexer_new(FILE *stream) {
     Lexer *new = malloc_or_die(sizeof *new);
-    new->data = data;
-    new->pos = 0;
+    new->stream = stream;
     return new;
 }
 
 void lexer_free(Lexer *this) {
+    /* Lexer doesn't own FILE *stream, so don't close it */
     free(this);
 }
 
-static Token *_peek(const char *data) {
+static Token *read_token(FILE *stream) {
     Token *result = NULL;
 
-    result = token_try_new_symbol(data);
+    result = token_try_new_symbol(stream);
     if(result)
         return result;
-    result = token_try_new_numeric(data);
+    result = token_try_new_numeric(stream);
     if(result)
         return result;
-    result = token_try_new_identifier(data);
+    result = token_try_new_identifier(stream);
     if(result)
         return result;
 
-    fprintf(stderr, "Lex error. Unhandled char: '%c'\n", *data);
+    fprintf(stderr, "Lex error. Unhandled char at pos %ld\n", ftell(stream));
     exit(-1);
 }
 
 Token *lexer_next(Lexer *this) {
-    while(_is_whitespace(this->data[this->pos]))
-        ++this->pos;
-    if(_is_eof(this->data[this->pos]))
+    int curr = getc(this->stream);
+
+    while(_is_whitespace(curr))
+        curr = getc(this->stream);
+    if(curr == EOF)
         return NULL;
-    Token *peek = _peek(&this->data[this->pos]);
-    if(!peek)
-        return NULL;
-    this->pos += peek->bytes_read;
-    return peek;
+
+    ungetc(curr, this->stream);
+
+    return read_token(this->stream);
 }

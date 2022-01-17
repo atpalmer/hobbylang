@@ -33,9 +33,11 @@ void test_lexer(void) {
         "x == 2\n"
         ;
 
-    Lexer *lexer = lexer_new(PROGRAM);
+    FILE *stream = fmemopen((void *)PROGRAM, strlen(PROGRAM), "r");
 
-    printf("PROGRAM:\n%s\n", lexer->data);
+    Lexer *lexer = lexer_new(stream);
+
+    printf("PROGRAM:\n%s\n", PROGRAM);
 
     Token *curr;
 
@@ -113,6 +115,7 @@ void test_lexer(void) {
     assert_equal_double(token_number(curr), 2);
 
     lexer_free(lexer);
+    fclose(stream);
 }
 
 void test_parser(void) {
@@ -133,22 +136,51 @@ void test_parser(void) {
             "2 + 2 != 4\n"
             ;
 
-    Interpreter *interp = interpreter_new(PROGRAM);
+    Interpreter *interp = interpreter_from_string(PROGRAM);
 
-    assert_equal_double(interpreter_parse_line(interp), 42);
-    assert_equal_double(interpreter_parse_line(interp), 3);
-    assert_equal_double(interpreter_parse_line(interp), 8);
-    assert_equal_double(interpreter_parse_line(interp), 18);
-    assert_equal_double(interpreter_parse_line(interp), 1);
-    assert_equal_double(interpreter_parse_line(interp), 7);
-    assert_equal_double(interpreter_parse_line(interp), 5);
-    assert_equal_double(interpreter_parse_line(interp), 35);
-    assert_equal_double(interpreter_parse_line(interp), 3);
-    assert_equal_double(interpreter_parse_line(interp), 48);
-    assert_equal_double(interpreter_parse_line(interp), 1);
-    assert_equal_double(interpreter_parse_line(interp), 1);
-    assert_equal_double(interpreter_parse_line(interp), 1);
-    assert_equal_double(interpreter_parse_line(interp), 0);
+    double result;
+
+    interpreter_parse_line(interp, &result);
+    assert_equal_double(result, 42);
+
+    interpreter_parse_line(interp, &result);
+    assert_equal_double(result, 3);
+
+    interpreter_parse_line(interp, &result);
+    assert_equal_double(result, 8);
+
+    interpreter_parse_line(interp, &result);
+    assert_equal_double(result, 18);
+
+    interpreter_parse_line(interp, &result);
+    assert_equal_double(result, 1);
+
+    interpreter_parse_line(interp, &result);
+    assert_equal_double(result, 7);
+
+    interpreter_parse_line(interp, &result);
+    assert_equal_double(result, 5);
+
+    interpreter_parse_line(interp, &result);
+    assert_equal_double(result, 35);
+
+    interpreter_parse_line(interp, &result);
+    assert_equal_double(result, 3);
+
+    interpreter_parse_line(interp, &result);
+    assert_equal_double(result, 48);
+
+    interpreter_parse_line(interp, &result);
+    assert_equal_double(result, 1);
+
+    interpreter_parse_line(interp, &result);
+    assert_equal_double(result, 1);
+
+    interpreter_parse_line(interp, &result);
+    assert_equal_double(result, 1);
+
+    interpreter_parse_line(interp, &result);
+    assert_equal_double(result, 0);
 
     interpreter_free(interp);
 }

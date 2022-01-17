@@ -2,49 +2,51 @@
 #include "syswrap.h"
 #include "interpreter.h"
 
-struct line {
-    size_t size;
-    char *buff;
-};
+int interactive(void) {
+    Interpreter *interp = interpreter_from_stream(NULL);
 
-struct line *line_new(void) {
-    struct line *new = malloc_or_die(sizeof *new);
-    new->size = 128;
-    new->buff = malloc_or_die(sizeof *new->buff * new->size);
-    return new;
-}
+    for(;;) {
+        printf(">>> ");
+        char *line = NULL;
+        size_t linecap = 0;
+        size_t bytes_read = getline(&line, &linecap, stdin);
+        if(line[0] == '\n')
+            goto loopend;
 
-void line_free(struct line *this) {
-    free(this->buff);
-    free(this);
-}
+        interp->parser->lexer->stream = fmemopen(line, bytes_read, "r");
+        double value = 0.0;
+        if(!interpreter_parse_line(interp, &value))
+            exit(-1);
+        printf("%f\n", value);
+        fclose(interp->parser->lexer->stream);
 
-int line_read(struct line *this, FILE *fp) {
-    return getline(&this->buff, &this->size, fp);
+loopend:
+        if(line)
+            free(line);
+    }
+
+    printf("\n");
+    interpreter_free(interp);
+    return 0;
 }
 
 int main(int argc, const char **argv) {
-    FILE *fp = argc < 2 ? stdin : fopen_or_die(argv[1], "r");
+    if(argc < 2)
+        return interactive();
 
-    struct line *line = line_new();
-    Interpreter *interp = interpreter_new("");
+    FILE *fp = fopen_or_die(argv[1], "r");
+
+    Interpreter *interp = interpreter_from_stream(fp);
 
     for(;;) {
-        if(fp == stdin)
-            printf(">>> ");
-        if(line_read(line, fp) < 0)
+        double value;
+        if(!interpreter_parse_line(interp, &value))
             break;
-        if(*line->buff == '\n')
-            continue;
-        interpreter_set_buff(interp, line->buff);
-        double value = interpreter_parse_line(interp);
         printf("%f\n", value);
     }
 
     printf("\n");
-    line_free(line);
     interpreter_free(interp);
-    if(fp != stdin)
-        fclose(fp);
+    fclose(fp);
     return 0;
 }

@@ -4,16 +4,11 @@
 #include "lexer.h"
 #include "parser.h"
 
-Parser *parser_new(const char *program) {
+Parser *parser_new(FILE *stream) {
     Parser *new = malloc_or_die(sizeof *new);
-    new->lexer = lexer_new(program);
+    new->lexer = lexer_new(stream);
     new->curr = NULL;
     return new;
-}
-
-void parser_set_buff(Parser *this, const char *program) {
-    lexer_free(this->lexer);
-    this->lexer = lexer_new(program);
 }
 
 void parser_free(Parser *this) {
@@ -94,8 +89,8 @@ AstNode *parser_atom_ast(Parser *this) {
         break;
     }
 
-    fprintf(stderr, "TokenType Error: Cannot parse atom. Position: %d. Found: '%c' (%d).\n",
-        this->lexer->pos, token_type(curr), token_type(curr));
+    fprintf(stderr, "TokenType Error: Cannot parse atom. Position: %ld. Found: '%c' (%d).\n",
+        lexer_pos(this->lexer), token_type(curr), token_type(curr));
     exit(-1);
 }
 
@@ -219,6 +214,8 @@ done:
 }
 
 AstNode *parser_line(Parser *this) {
+    if(!parser_curr(this))
+        return NULL;
     AstNode *result = parser_expr_ast(this);
     parser_accept(this, TOKT_NEWLINE);
     return result;

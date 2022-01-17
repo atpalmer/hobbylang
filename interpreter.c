@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "ast.h"
 #include "varmap.h"
 #include "interpreter.h"
@@ -74,27 +75,37 @@ double _interpret_ast(AstNode *ast, VarEntry **vars) {
     exit(-1);
 }
 
-Interpreter *interpreter_new(const char *program) {
+Interpreter *interpreter_from_string(const char *program) {
     Interpreter *new = malloc_or_die(sizeof *new);
-    new->parser = parser_new(program);
+    FILE *stream = fmemopen((void *)program, strlen(program), "r");
+    new->parser = parser_new(stream);
     new->varmap = NULL;
+    new->stream = stream;
+    return new;
+}
+
+Interpreter *interpreter_from_stream(FILE *stream) {
+    Interpreter *new = malloc_or_die(sizeof *new);
+    new->parser = parser_new(stream);
+    new->varmap = NULL;
+    new->stream = NULL;  /* if we receive a file handle, we don't own it! */
     return new;
 }
 
 void interpreter_free(Interpreter *this) {
+    if(this->stream)
+        fclose(this->stream);
     parser_free(this->parser);
     varmap_free(this->varmap);
     free(this);
 }
 
-double interpreter_parse_line(Interpreter *this) {
+int interpreter_parse_line(Interpreter *this, double *result) {
     AstNode *ast = parser_line(this->parser);
-    double result = _interpret_ast(ast, &this->varmap);
+    if(!ast)
+        return 0;
+    *result = _interpret_ast(ast, &this->varmap);
     ast_free(ast);
-    varmap_setval(&this->varmap, "_", result);
-    return result;
-}
-
-void interpreter_set_buff(Interpreter *this, const char *buff) {
-    parser_set_buff(this->parser, buff);
+    varmap_setval(&this->varmap, "_", *result);
+    return 1;
 }

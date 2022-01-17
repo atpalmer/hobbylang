@@ -38,14 +38,17 @@ typedef struct {
 } NumericToken;
 
 typedef struct {
-    const char *data;
-    int pos;
+    FILE *stream;
 } Lexer;
 
 
-Lexer *lexer_new(const char *data);
+Lexer *lexer_new(FILE *stream);
 void lexer_free(Lexer *this);
 Token *lexer_next(Lexer *this);
+
+static inline long lexer_pos(Lexer *this) {
+    return ftell(this->stream);
+}
 
 TokenType token_type(Token *this);
 Token *token_ensure_type(Token *this, TokenType expect);
