@@ -3,6 +3,7 @@
 
 #include "parser.h"
 #include "varmap.h"
+#include "object.h"
 
 typedef struct {
     VarEntry *varmap;
@@ -10,6 +11,6 @@ typedef struct {
 
 Interpreter *interpreter_new(void);
 void interpreter_free(Interpreter *this);
-int interpreter_parse_line(Interpreter *this, FILE *stream, double *result);
+Object *interpreter_parse_line(Interpreter *this, FILE *stream);
 
 #endif

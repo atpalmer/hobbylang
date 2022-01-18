@@ -115,6 +115,12 @@ void test_lexer(void) {
     fclose(stream);
 }
 
+void _test_parser_next(Interpreter *interp, FILE *stream, double expected) {
+    Object *result = interpreter_parse_line(interp, stream);
+    assert_equal_double(Object_as_double(result), expected);
+    Object_destroy(result);
+}
+
 void test_parser(void) {
     static const char *PROGRAM =
             "42\n"
@@ -137,49 +143,20 @@ void test_parser(void) {
 
     Interpreter *interp = interpreter_new();
 
-    double result;
-
-    interpreter_parse_line(interp, stream, &result);
-    assert_equal_double(result, 42);
-
-    interpreter_parse_line(interp, stream, &result);
-    assert_equal_double(result, 3);
-
-    interpreter_parse_line(interp, stream, &result);
-    assert_equal_double(result, 8);
-
-    interpreter_parse_line(interp, stream, &result);
-    assert_equal_double(result, 18);
-
-    interpreter_parse_line(interp, stream, &result);
-    assert_equal_double(result, 1);
-
-    interpreter_parse_line(interp, stream, &result);
-    assert_equal_double(result, 7);
-
-    interpreter_parse_line(interp, stream, &result);
-    assert_equal_double(result, 5);
-
-    interpreter_parse_line(interp, stream, &result);
-    assert_equal_double(result, 35);
-
-    interpreter_parse_line(interp, stream, &result);
-    assert_equal_double(result, 3);
-
-    interpreter_parse_line(interp, stream, &result);
-    assert_equal_double(result, 48);
-
-    interpreter_parse_line(interp, stream, &result);
-    assert_equal_double(result, 1);
-
-    interpreter_parse_line(interp, stream, &result);
-    assert_equal_double(result, 1);
-
-    interpreter_parse_line(interp, stream, &result);
-    assert_equal_double(result, 1);
-
-    interpreter_parse_line(interp, stream, &result);
-    assert_equal_double(result, 0);
+    _test_parser_next(interp, stream, 42);
+    _test_parser_next(interp, stream, 3);
+    _test_parser_next(interp, stream, 8);
+    _test_parser_next(interp, stream, 18);
+    _test_parser_next(interp, stream, 1);
+    _test_parser_next(interp, stream, 7);
+    _test_parser_next(interp, stream, 5);
+    _test_parser_next(interp, stream, 35);
+    _test_parser_next(interp, stream, 3);
+    _test_parser_next(interp, stream, 48);
+    _test_parser_next(interp, stream, 1);
+    _test_parser_next(interp, stream, 1);
+    _test_parser_next(interp, stream, 1);
+    _test_parser_next(interp, stream, 0);
 
     interpreter_free(interp);
     fclose(stream);

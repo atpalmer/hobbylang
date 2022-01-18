@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "syswrap.h"
 #include "interpreter.h"
+#include "object.h"
 
 int interactive(void) {
     Interpreter *interp = interpreter_new();
@@ -14,10 +15,11 @@ int interactive(void) {
             goto loopend;
 
         FILE *stream = fmemopen(line, bytes_read, "r");
-        double value = 0.0;
-        if(!interpreter_parse_line(interp, stream, &value))
+        Object *value = interpreter_parse_line(interp, stream);
+        if(!value)
             exit(-1);
-        printf("%f\n", value);
+        Object_println(value);
+        Object_destroy(value);
         fclose(stream);
 
 loopend:
@@ -39,10 +41,11 @@ int main(int argc, const char **argv) {
     Interpreter *interp = interpreter_new();
 
     for(;;) {
-        double value;
-        if(!interpreter_parse_line(interp, stream, &value))
+        Object *value = interpreter_parse_line(interp, stream);
+        if(!value)
             break;
-        printf("%f\n", value);
+        Object_println(value);
+        Object_destroy(value);
     }
 
     printf("\n");

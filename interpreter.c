@@ -86,12 +86,12 @@ void interpreter_free(Interpreter *this) {
     free(this);
 }
 
-int interpreter_parse_line(Interpreter *this, FILE *stream, double *result) {
+Object *interpreter_parse_line(Interpreter *this, FILE *stream) {
     AstNode *ast = parser_parse(stream);
     if(!ast)
-        return 0;
-    *result = _interpret_ast(ast, &this->varmap);
+        return NULL;
+    double result = _interpret_ast(ast, &this->varmap);
     ast_free(ast);
-    varmap_setval(&this->varmap, "_", *result);
-    return 1;
+    varmap_setval(&this->varmap, "_", result);
+    return DoubleObject_from_double(result);
 }
