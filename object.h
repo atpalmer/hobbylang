@@ -88,6 +88,4 @@ static inline Object *Object_uop(Object *this, AstOp op) {
     return this->as_object->uop(this, op);
 }
 
-Object *DoubleObject_from_double(double value);
-
 #endif

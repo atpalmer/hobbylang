@@ -4,6 +4,7 @@
 #include <string.h>
 #include "ast.h"
 #include "object.h"
+#include "doubleobj.h"
 #include "mapobj.h"
 #include "interpreter.h"
 #include "parser.h"

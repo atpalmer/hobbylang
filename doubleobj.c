@@ -2,18 +2,16 @@
 #include <string.h>
 #include "syswrap.h"
 #include "object.h"
-
-static void object_destroy(Object *this) {
-    free(this);
-}
-
-
-/*** DoubleObject ***/
+#include "doubleobj.h"
 
 typedef struct {
     Object base;
     double value;
 } DoubleObject;
+
+static void DoubleObject_destroy(Object *this) {
+    free(this);
+}
 
 static int DoubleObject_to_stream(Object *this, FILE *out, const char *term) {
     double value = ((DoubleObject *)this)->value;
@@ -96,7 +94,7 @@ static Object *DoubleObject_clone(Object *this) {
 ObjectInterface DoubleObject_as_object = {
     .name = "Double",
     .clone = DoubleObject_clone,
-    .destroy = object_destroy,
+    .destroy = DoubleObject_destroy,
     .to_stream = DoubleObject_to_stream,
     .as_double = DoubleObject_as_double,
     .binop = DoubleObject_binop,
