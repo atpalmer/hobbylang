@@ -75,33 +75,19 @@ double _interpret_ast(AstNode *ast, VarEntry **vars) {
     exit(-1);
 }
 
-Interpreter *interpreter_from_string(const char *program) {
+Interpreter *interpreter_new(void) {
     Interpreter *new = malloc_or_die(sizeof *new);
-    FILE *stream = fmemopen((void *)program, strlen(program), "r");
-    new->parser = parser_new(stream);
     new->varmap = NULL;
-    new->stream = stream;
-    return new;
-}
-
-Interpreter *interpreter_from_stream(FILE *stream) {
-    Interpreter *new = malloc_or_die(sizeof *new);
-    new->parser = parser_new(stream);
-    new->varmap = NULL;
-    new->stream = NULL;  /* if we receive a file handle, we don't own it! */
     return new;
 }
 
 void interpreter_free(Interpreter *this) {
-    if(this->stream)
-        fclose(this->stream);
-    parser_free(this->parser);
     varmap_free(this->varmap);
     free(this);
 }
 
-int interpreter_parse_line(Interpreter *this, double *result) {
-    AstNode *ast = parser_line(this->parser);
+int interpreter_parse_line(Interpreter *this, FILE *stream, double *result) {
+    AstNode *ast = parser_parse(stream);
     if(!ast)
         return 0;
     *result = _interpret_ast(ast, &this->varmap);

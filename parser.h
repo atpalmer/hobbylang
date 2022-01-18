@@ -12,7 +12,6 @@ typedef struct {
 
 Parser *parser_new(FILE *stream);
 void parser_free(Parser *this);
-int parser_has_next(Parser *this);
-AstNode *parser_line(Parser *this);
+AstNode *parser_parse(FILE *stream);
 
 #endif

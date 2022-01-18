@@ -109,6 +109,8 @@ static Token *token_try_new_identifier(FILE *stream) {
 }
 
 void token_free(Token *this) {
+    if(!this)
+        return;
     free(this);
 }
 

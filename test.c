@@ -133,53 +133,56 @@ void test_parser(void) {
             "2 + 2 != 4\n"
             ;
 
-    Interpreter *interp = interpreter_from_string(PROGRAM);
+    FILE *stream = fmemopen((void *)PROGRAM, strlen(PROGRAM), "r");
+
+    Interpreter *interp = interpreter_new();
 
     double result;
 
-    interpreter_parse_line(interp, &result);
+    interpreter_parse_line(interp, stream, &result);
     assert_equal_double(result, 42);
 
-    interpreter_parse_line(interp, &result);
+    interpreter_parse_line(interp, stream, &result);
     assert_equal_double(result, 3);
 
-    interpreter_parse_line(interp, &result);
+    interpreter_parse_line(interp, stream, &result);
     assert_equal_double(result, 8);
 
-    interpreter_parse_line(interp, &result);
+    interpreter_parse_line(interp, stream, &result);
     assert_equal_double(result, 18);
 
-    interpreter_parse_line(interp, &result);
+    interpreter_parse_line(interp, stream, &result);
     assert_equal_double(result, 1);
 
-    interpreter_parse_line(interp, &result);
+    interpreter_parse_line(interp, stream, &result);
     assert_equal_double(result, 7);
 
-    interpreter_parse_line(interp, &result);
+    interpreter_parse_line(interp, stream, &result);
     assert_equal_double(result, 5);
 
-    interpreter_parse_line(interp, &result);
+    interpreter_parse_line(interp, stream, &result);
     assert_equal_double(result, 35);
 
-    interpreter_parse_line(interp, &result);
+    interpreter_parse_line(interp, stream, &result);
     assert_equal_double(result, 3);
 
-    interpreter_parse_line(interp, &result);
+    interpreter_parse_line(interp, stream, &result);
     assert_equal_double(result, 48);
 
-    interpreter_parse_line(interp, &result);
+    interpreter_parse_line(interp, stream, &result);
     assert_equal_double(result, 1);
 
-    interpreter_parse_line(interp, &result);
+    interpreter_parse_line(interp, stream, &result);
     assert_equal_double(result, 1);
 
-    interpreter_parse_line(interp, &result);
+    interpreter_parse_line(interp, stream, &result);
     assert_equal_double(result, 1);
 
-    interpreter_parse_line(interp, &result);
+    interpreter_parse_line(interp, stream, &result);
     assert_equal_double(result, 0);
 
     interpreter_free(interp);
+    fclose(stream);
 }
 
 int main(void) {

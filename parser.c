@@ -23,16 +23,11 @@ Token *parser_curr(Parser *this) {
     return this->curr;
 }
 
-void parser_next(Parser *this) {
-    if(this->curr)
-        token_free(this->curr);
-    this->curr = token_next(this->stream);
-}
-
 void parser_accept(Parser *this, TokenType token_type) {
     Token *curr = parser_curr(this);
     token_ensure_type(curr, token_type);
-    parser_next(this);
+    token_free(this->curr);
+    this->curr = NULL;
 }
 
 AstNode *parser_expr_ast(Parser *this);
@@ -218,5 +213,12 @@ AstNode *parser_line(Parser *this) {
         return NULL;
     AstNode *result = parser_expr_ast(this);
     parser_accept(this, TOKT_NEWLINE);
+    return result;
+}
+
+AstNode *parser_parse(FILE *stream) {
+    Parser *parser = parser_new(stream);
+    AstNode *result = parser_line(parser);
+    parser_free(parser);
     return result;
 }
