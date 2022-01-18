@@ -2,7 +2,7 @@
 #define OBJECT_H
 
 #include <stdlib.h>
-#include "ast.h"
+#include "optype.h"
 
 typedef struct object Object;
 
@@ -14,8 +14,8 @@ typedef struct {
     double (*as_double)(Object *this);
     Object *(*get)(Object *this, const char *key);
     void (*set)(Object *this, const char *key, Object *value);
-    Object *(*binop)(Object *this, Object *other, AstOp op);
-    Object *(*uop)(Object *this, AstOp op);
+    Object *(*binop)(Object *this, Object *other, BinaryOp op);
+    Object *(*uop)(Object *this, UnaryOp op);
 } ObjectInterface;
 
 struct object {
@@ -72,7 +72,7 @@ static inline void Object_set(Object *this, const char *key, Object *value) {
     this->as_object->set(this, key, value);
 }
 
-static inline Object *Object_binop(Object *this, Object *other, AstOp op) {
+static inline Object *Object_binop(Object *this, Object *other, BinaryOp op) {
     if(!this->as_object->binop) {
         fprintf(stderr, "Error: %s.binop\n", this->as_object->name);
         exit(-1);
@@ -80,7 +80,7 @@ static inline Object *Object_binop(Object *this, Object *other, AstOp op) {
     return this->as_object->binop(this, other, op);
 }
 
-static inline Object *Object_uop(Object *this, AstOp op) {
+static inline Object *Object_uop(Object *this, UnaryOp op) {
     if(!this->as_object->uop) {
         fprintf(stderr, "Error: %s.uop\n", this->as_object->name);
         exit(-1);

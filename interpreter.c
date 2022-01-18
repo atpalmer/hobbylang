@@ -6,6 +6,7 @@
 #include "object.h"
 #include "doubleobj.h"
 #include "mapobj.h"
+#include "optype.h"
 #include "interpreter.h"
 #include "parser.h"
 #include "syswrap.h"
@@ -22,7 +23,7 @@ Object *_interpret_ast(AstNode *ast, Object *vars) {
     if(ast->type == ASTT_BINOP) {
         AstBinOpNode *node = (AstBinOpNode *)ast;
 
-        if(node->op == ASTOP_ASSIGN) {
+        if(node->op == BINOP_ASSIGN) {
             if(node->left->type != ASTT_ID) {
                 fprintf(stderr, "Cannot assign to AstNode type: %d\n", node->left->type);
                 exit(-1);

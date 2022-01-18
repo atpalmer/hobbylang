@@ -41,7 +41,7 @@ AstNode *ast_id_new(const char *value) {
     return (AstNode *)new;
 }
 
-AstNode *ast_binop_new(AstOp op, AstNode *left, AstNode *right) {
+AstNode *ast_binop_new(BinaryOp op, AstNode *left, AstNode *right) {
     AstBinOpNode *new = malloc(sizeof *new);
     _base_init(&new->base, ASTT_BINOP);
     new->op = op;
@@ -50,7 +50,7 @@ AstNode *ast_binop_new(AstOp op, AstNode *left, AstNode *right) {
     return (AstNode *)new;
 }
 
-AstNode *ast_uop_new(AstOp op, AstNode *operand) {
+AstNode *ast_uop_new(UnaryOp op, AstNode *operand) {
     AstUnaryOpNode *new = malloc(sizeof *new);
     _base_init(&new->base, ASTT_UOP);
     new->op = op;

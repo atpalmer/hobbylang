@@ -3,6 +3,7 @@
 #include "syswrap.h"
 #include "object.h"
 #include "doubleobj.h"
+#include "optype.h"
 
 typedef struct {
     Object base;
@@ -22,41 +23,41 @@ static double DoubleObject_as_double(Object *this) {
     return ((DoubleObject *)this)->value;
 }
 
-static Object *DoubleObject_binop(Object *this, Object *other, AstOp op) {
+static Object *DoubleObject_binop(Object *this, Object *other, BinaryOp op) {
     double result = 0.0;
 
     switch(op) {
-    case ASTOP_EQ:
+    case BINOP_EQ:
         result = Object_as_double(this) == Object_as_double(other);
         break;
-    case ASTOP_NE:
+    case BINOP_NE:
         result = Object_as_double(this) != Object_as_double(other);
         break;
-    case ASTOP_LT:
+    case BINOP_LT:
         result = Object_as_double(this) < Object_as_double(other);
         break;
-    case ASTOP_GT:
+    case BINOP_GT:
         result = Object_as_double(this) > Object_as_double(other);
         break;
-    case ASTOP_PLUS:
+    case BINOP_PLUS:
         result = Object_as_double(this) + Object_as_double(other);
         break;
-    case ASTOP_MINUS:
+    case BINOP_MINUS:
         result = Object_as_double(this) - Object_as_double(other);
         break;
-    case ASTOP_MULT:
+    case BINOP_MULT:
         result = Object_as_double(this) * Object_as_double(other);
         break;
-    case ASTOP_DIV:
+    case BINOP_DIV:
         result = Object_as_double(this) / Object_as_double(other);
         break;
-    case ASTOP_FLOORDIV:
+    case BINOP_FLOORDIV:
         result = floor(Object_as_double(this) / Object_as_double(other));
         break;
-    case ASTOP_MOD:
+    case BINOP_MOD:
         result = fmod(Object_as_double(this), Object_as_double(other));
         break;
-    case ASTOP_POW:
+    case BINOP_POW:
         result = pow(Object_as_double(this), Object_as_double(other));
         break;
     default:
@@ -67,14 +68,14 @@ static Object *DoubleObject_binop(Object *this, Object *other, AstOp op) {
     return DoubleObject_from_double(result);
 }
 
-static Object *DoubleObject_uop(Object *this, AstOp op) {
+static Object *DoubleObject_uop(Object *this, UnaryOp op) {
     double result = 0.0;
 
     switch(op) {
-    case ASTOP_UPLUS:
+    case UOP_UPLUS:
         result = +Object_as_double(this);
         break;
-    case ASTOP_UMINUS:
+    case UOP_UMINUS:
         result = -Object_as_double(this);
         break;
     default:

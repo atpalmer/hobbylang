@@ -3,6 +3,7 @@
 #include "syswrap.h"
 #include "token.h"
 #include "parser.h"
+#include "optype.h"
 
 Parser *parser_new(FILE *stream) {
     Parser *new = malloc_or_die(sizeof *new);
@@ -38,7 +39,7 @@ AstNode *parser_handle_assignment_ast(Parser *this, const char *key) {
     AstNode *id = ast_id_new(key);
     AstNode *value = parser_expr_ast(this);
 
-    return ast_binop_new(ASTOP_ASSIGN, id, value);
+    return ast_binop_new(BINOP_ASSIGN, id, value);
 }
 
 AstNode *parser_handle_variable_ast(Parser *this) {
@@ -94,10 +95,10 @@ AstNode *parser_signed_atom_ast(Parser *this) {
     switch(token_type(curr)) {
     case TOKT_MINUS:
         parser_accept(this, TOKT_MINUS);
-        return ast_uop_new(ASTOP_UMINUS, parser_atom_ast(this));
+        return ast_uop_new(UOP_UMINUS, parser_atom_ast(this));
     case TOKT_PLUS:
         parser_accept(this, TOKT_PLUS);
-        return ast_uop_new(ASTOP_UPLUS, parser_atom_ast(this));
+        return ast_uop_new(UOP_UPLUS, parser_atom_ast(this));
     default:
         break;
     }
@@ -112,7 +113,7 @@ AstNode *parser_factor_ast(Parser *this) {
     switch(token_type(curr)) {
     case TOKT_DUBSTAR:
         parser_accept(this, TOKT_DUBSTAR);
-        return ast_binop_new(ASTOP_POW, base, parser_factor_ast(this));
+        return ast_binop_new(BINOP_POW, base, parser_factor_ast(this));
     default:
         break;
     }
@@ -129,19 +130,19 @@ AstNode *parser_term_ast(Parser *this) {
         switch(token_type(curr)) {
         case TOKT_STAR:
             parser_accept(this, TOKT_STAR);
-            result = ast_binop_new(ASTOP_MULT, result, parser_factor_ast(this));
+            result = ast_binop_new(BINOP_MULT, result, parser_factor_ast(this));
             break;
         case TOKT_SLASH:
             parser_accept(this, TOKT_SLASH);
-            result = ast_binop_new(ASTOP_DIV, result, parser_factor_ast(this));
+            result = ast_binop_new(BINOP_DIV, result, parser_factor_ast(this));
             break;
         case TOKT_DUBSLASH:
             parser_accept(this, TOKT_DUBSLASH);
-            result = ast_binop_new(ASTOP_FLOORDIV, result, parser_factor_ast(this));
+            result = ast_binop_new(BINOP_FLOORDIV, result, parser_factor_ast(this));
             break;
         case TOKT_PERCENT:
             parser_accept(this, TOKT_PERCENT);
-            result = ast_binop_new(ASTOP_MOD, result, parser_factor_ast(this));
+            result = ast_binop_new(BINOP_MOD, result, parser_factor_ast(this));
             break;
         default:
             goto done;
@@ -161,11 +162,11 @@ AstNode *parser_sum_ast(Parser *this) {
         switch(token_type(curr)) {
         case TOKT_PLUS:
             parser_accept(this, TOKT_PLUS);
-            result = ast_binop_new(ASTOP_PLUS, result, parser_term_ast(this));
+            result = ast_binop_new(BINOP_PLUS, result, parser_term_ast(this));
             break;
         case TOKT_MINUS:
             parser_accept(this, TOKT_MINUS);
-            result = ast_binop_new(ASTOP_MINUS, result, parser_term_ast(this));
+            result = ast_binop_new(BINOP_MINUS, result, parser_term_ast(this));
             break;
         default:
             goto done;
@@ -185,19 +186,19 @@ AstNode *parser_expr_ast(Parser *this) {
         switch(token_type(curr)) {
         case TOKT_DUBEQ:
             parser_accept(this, TOKT_DUBEQ);
-            result = ast_binop_new(ASTOP_EQ, result, parser_sum_ast(this));
+            result = ast_binop_new(BINOP_EQ, result, parser_sum_ast(this));
             break;
         case TOKT_NE:
             parser_accept(this, TOKT_NE);
-            result = ast_binop_new(ASTOP_NE, result, parser_sum_ast(this));
+            result = ast_binop_new(BINOP_NE, result, parser_sum_ast(this));
             break;
         case TOKT_LT:
             parser_accept(this, TOKT_LT);
-            result = ast_binop_new(ASTOP_LT, result, parser_sum_ast(this));
+            result = ast_binop_new(BINOP_LT, result, parser_sum_ast(this));
             break;
         case TOKT_GT:
             parser_accept(this, TOKT_GT);
-            result = ast_binop_new(ASTOP_GT, result, parser_sum_ast(this));
+            result = ast_binop_new(BINOP_GT, result, parser_sum_ast(this));
             break;
         default:
             goto done;
