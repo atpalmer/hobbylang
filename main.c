@@ -4,6 +4,7 @@
 
 int interactive(void) {
     Interpreter *interp = interpreter_from_stream(NULL);
+    FILE **stream = &interp->parser->stream;
 
     for(;;) {
         printf(">>> ");
@@ -13,12 +14,12 @@ int interactive(void) {
         if(line[0] == '\n')
             goto loopend;
 
-        interp->parser->lexer->stream = fmemopen(line, bytes_read, "r");
+        *stream = fmemopen(line, bytes_read, "r");
         double value = 0.0;
         if(!interpreter_parse_line(interp, &value))
             exit(-1);
         printf("%f\n", value);
-        fclose(interp->parser->lexer->stream);
+        fclose(*stream);
 
 loopend:
         if(line)

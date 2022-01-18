@@ -1,32 +1,32 @@
 #include <stdio.h>
 #include "error.h"
 #include "syswrap.h"
-#include "lexer.h"
+#include "token.h"
 #include "parser.h"
 
 Parser *parser_new(FILE *stream) {
     Parser *new = malloc_or_die(sizeof *new);
-    new->lexer = lexer_new(stream);
+    new->stream = stream;
     new->curr = NULL;
     return new;
 }
 
 void parser_free(Parser *this) {
-    lexer_free(this->lexer);
+    /* do not close this->stream */
     token_free(this->curr);
     free(this);
 }
 
 Token *parser_curr(Parser *this) {
     if(!this->curr)
-        this->curr = lexer_next(this->lexer);
+        this->curr = token_next(this->stream);
     return this->curr;
 }
 
 void parser_next(Parser *this) {
     if(this->curr)
         token_free(this->curr);
-    this->curr = lexer_next(this->lexer);
+    this->curr = token_next(this->stream);
 }
 
 void parser_accept(Parser *this, TokenType token_type) {
@@ -90,7 +90,7 @@ AstNode *parser_atom_ast(Parser *this) {
     }
 
     fprintf(stderr, "TokenType Error: Cannot parse atom. Position: %ld. Found: '%c' (%d).\n",
-        lexer_pos(this->lexer), token_type(curr), token_type(curr));
+        ftell(this->stream), token_type(curr), token_type(curr));
     exit(-1);
 }
 

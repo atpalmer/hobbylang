@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "parser.h"
-#include "lexer.h"
+#include "token.h"
 #include "interpreter.h"
 
 static void assert_equal_int(int left, int right) {
@@ -35,86 +35,83 @@ void test_lexer(void) {
 
     FILE *stream = fmemopen((void *)PROGRAM, strlen(PROGRAM), "r");
 
-    Lexer *lexer = lexer_new(stream);
-
     printf("PROGRAM:\n%s\n", PROGRAM);
 
     Token *curr;
 
-    curr = lexer_next(lexer);
+    curr = token_next(stream);
     assert_equal_int(token_type(curr), TOKT_IDENTIFIER);
     assert_equal_string(token_varname(curr), "x");
 
-    curr = lexer_next(lexer);
+    curr = token_next(stream);
     assert_equal_int(token_type(curr), TOKT_EQ);
 
-    curr = lexer_next(lexer);
+    curr = token_next(stream);
     assert_equal_int(token_type(curr), TOKT_NUMBER);
     assert_equal_double(token_number(curr), 2);
 
-    curr = lexer_next(lexer);
+    curr = token_next(stream);
     assert_equal_int(token_type(curr), TOKT_NEWLINE);
 
-    curr = lexer_next(lexer);
+    curr = token_next(stream);
     assert_equal_int(token_type(curr), TOKT_IDENTIFIER);
     assert_equal_string(token_varname(curr), "x");
 
-    curr = lexer_next(lexer);
+    curr = token_next(stream);
     assert_equal_int(token_type(curr), TOKT_STAR);
 
-    curr = lexer_next(lexer);
+    curr = token_next(stream);
     assert_equal_int(token_type(curr), TOKT_NUMBER);
     assert_equal_double(token_number(curr), 1.5);
 
-    curr = lexer_next(lexer);
+    curr = token_next(stream);
     assert_equal_int(token_type(curr), TOKT_PLUS);
 
-    curr = lexer_next(lexer);
+    curr = token_next(stream);
     assert_equal_int(token_type(curr), TOKT_LPAREN);
 
-    curr = lexer_next(lexer);
+    curr = token_next(stream);
     assert_equal_int(token_type(curr), TOKT_NUMBER);
     assert_equal_double(token_number(curr), 123.0);
 
-    curr = lexer_next(lexer);
+    curr = token_next(stream);
     assert_equal_int(token_type(curr), TOKT_MINUS);
 
-    curr = lexer_next(lexer);
+    curr = token_next(stream);
     assert_equal_int(token_type(curr), TOKT_NUMBER);
     assert_equal_double(token_number(curr), 456.0);
 
-    curr = lexer_next(lexer);
+    curr = token_next(stream);
     assert_equal_int(token_type(curr), TOKT_RPAREN);
 
-    curr = lexer_next(lexer);
+    curr = token_next(stream);
     assert_equal_int(token_type(curr), TOKT_NEWLINE);
 
-    curr = lexer_next(lexer);
+    curr = token_next(stream);
     assert_equal_int(token_type(curr), TOKT_IDENTIFIER);
     assert_equal_string(token_varname(curr), "x");
 
-    curr = lexer_next(lexer);
+    curr = token_next(stream);
     assert_equal_int(token_type(curr), TOKT_DUBSLASH);
 
-    curr = lexer_next(lexer);
+    curr = token_next(stream);
     assert_equal_int(token_type(curr), TOKT_NUMBER);
     assert_equal_double(token_number(curr), 1.5);
 
-    curr = lexer_next(lexer);
+    curr = token_next(stream);
     assert_equal_int(token_type(curr), TOKT_NEWLINE);
 
-    curr = lexer_next(lexer);
+    curr = token_next(stream);
     assert_equal_int(token_type(curr), TOKT_IDENTIFIER);
     assert_equal_string(token_varname(curr), "x");
 
-    curr = lexer_next(lexer);
+    curr = token_next(stream);
     assert_equal_int(token_type(curr), TOKT_DUBEQ);
 
-    curr = lexer_next(lexer);
+    curr = token_next(stream);
     assert_equal_int(token_type(curr), TOKT_NUMBER);
     assert_equal_double(token_number(curr), 2);
 
-    lexer_free(lexer);
     fclose(stream);
 }
 

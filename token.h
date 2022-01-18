@@ -1,5 +1,5 @@
-#ifndef LEXER_H
-#define LEXER_H
+#ifndef TOKEN_H
+#define TOKEN_H
 
 typedef enum {
     TOKT_NULL = 0,
@@ -37,24 +37,11 @@ typedef struct {
     double value;
 } NumericToken;
 
-typedef struct {
-    FILE *stream;
-} Lexer;
-
-
-Lexer *lexer_new(FILE *stream);
-void lexer_free(Lexer *this);
-Token *lexer_next(Lexer *this);
-
-static inline long lexer_pos(Lexer *this) {
-    return ftell(this->stream);
-}
-
+Token *token_next(FILE *stream);
 TokenType token_type(Token *this);
 Token *token_ensure_type(Token *this, TokenType expect);
 double token_number(Token *this);
 const char *token_varname(Token *this);
-
 void token_free(Token *this);
 
 #endif

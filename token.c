@@ -3,7 +3,7 @@
 #include <string.h>
 #include "error.h"
 #include "syswrap.h"
-#include "lexer.h"
+#include "token.h"
 
 static int _is_whitespace(int c) {
     static const char VALID[] = " \t";
@@ -134,17 +134,6 @@ const char *token_varname(Token *this) {
     return idtok->value;
 }
 
-Lexer *lexer_new(FILE *stream) {
-    Lexer *new = malloc_or_die(sizeof *new);
-    new->stream = stream;
-    return new;
-}
-
-void lexer_free(Lexer *this) {
-    /* Lexer doesn't own FILE *stream, so don't close it */
-    free(this);
-}
-
 static Token *read_token(FILE *stream) {
     Token *result = NULL;
 
@@ -162,15 +151,15 @@ static Token *read_token(FILE *stream) {
     exit(-1);
 }
 
-Token *lexer_next(Lexer *this) {
-    int curr = getc(this->stream);
+Token *token_next(FILE *stream) {
+    int curr = getc(stream);
 
     while(_is_whitespace(curr))
-        curr = getc(this->stream);
+        curr = getc(stream);
     if(curr == EOF)
         return NULL;
 
-    ungetc(curr, this->stream);
+    ungetc(curr, stream);
 
-    return read_token(this->stream);
+    return read_token(stream);
 }

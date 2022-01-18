@@ -1,12 +1,12 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include "lexer.h"
+#include "token.h"
 #include "varmap.h"
 #include "ast.h"
 
 typedef struct {
-    Lexer *lexer;
+    FILE *stream;
     Token *curr;
 } Parser;
 
