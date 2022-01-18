@@ -2,7 +2,6 @@
 #define PARSER_H
 
 #include "token.h"
-#include "varmap.h"
 #include "ast.h"
 
 typedef struct {

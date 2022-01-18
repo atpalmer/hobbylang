@@ -3,72 +3,59 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ast.h"
-#include "varmap.h"
+#include "object.h"
+#include "mapobj.h"
 #include "interpreter.h"
 #include "parser.h"
 #include "syswrap.h"
 
-double _interpret_ast(AstNode *ast, VarEntry **vars) {
+Object *_interpret_ast(AstNode *ast, Object *vars) {
     if(ast->type == ASTT_DOUBLE) {
-        return ((AstDoubleNode *)ast)->value;
+        return DoubleObject_from_double(((AstDoubleNode *)ast)->value);
     }
+
     if(ast->type == ASTT_ID) {
-        return varmap_getval(*vars, ((AstIdentifierNode *)ast)->value);
+        return Object_get(vars, ((AstIdentifierNode *)ast)->value);
     }
+
     if(ast->type == ASTT_BINOP) {
         AstBinOpNode *node = (AstBinOpNode *)ast;
-        if(node->op == ASTOP_EQ) {
-            return _interpret_ast(node->left, vars) == _interpret_ast(node->right, vars);
-        }
-        if(node->op == ASTOP_NE) {
-            return _interpret_ast(node->left, vars) != _interpret_ast(node->right, vars);
-        }
-        if(node->op == ASTOP_LT) {
-            return _interpret_ast(node->left, vars) < _interpret_ast(node->right, vars);
-        }
-        if(node->op == ASTOP_GT) {
-            return _interpret_ast(node->left, vars) > _interpret_ast(node->right, vars);
-        }
-        if(node->op == ASTOP_PLUS) {
-            return _interpret_ast(node->left, vars) + _interpret_ast(node->right, vars);
-        }
-        if(node->op == ASTOP_MINUS) {
-            return _interpret_ast(node->left, vars) - _interpret_ast(node->right, vars);
-        }
-        if(node->op == ASTOP_MULT) {
-            return _interpret_ast(node->left, vars) * _interpret_ast(node->right, vars);
-        }
-        if(node->op == ASTOP_DIV) {
-            return _interpret_ast(node->left, vars) / _interpret_ast(node->right, vars);
-        }
-        if(node->op == ASTOP_FLOORDIV) {
-            return floor(_interpret_ast(node->left, vars) / _interpret_ast(node->right, vars));
-        }
-        if(node->op == ASTOP_MOD) {
-            return fmod(_interpret_ast(node->left, vars), _interpret_ast(node->right, vars));
-        }
-        if(node->op == ASTOP_POW) {
-            return pow(_interpret_ast(node->left, vars), _interpret_ast(node->right, vars));
-        }
+
         if(node->op == ASTOP_ASSIGN) {
             if(node->left->type != ASTT_ID) {
                 fprintf(stderr, "Cannot assign to AstNode type: %d\n", node->left->type);
                 exit(-1);
             }
             const char *id = ((AstIdentifierNode *)node->left)->value;
-            double val = _interpret_ast(node->right, vars);
-            varmap_setval(vars, id, val);
-            return val;
+
+            Object *val = _interpret_ast(node->right, vars);
+            Object_set(vars, id, val);
+
+            return Object_clone(val);
+        }
+        else {
+            Object *left = _interpret_ast(node->left, vars);
+            Object *right = _interpret_ast(node->right, vars);
+
+            Object *result = Object_binop(left, right, node->op);
+
+            Object_destroy(left);
+            Object_destroy(right);
+
+            return result;
         }
     }
+
     if(ast->type == ASTT_UOP) {
         AstUnaryOpNode *node = (AstUnaryOpNode *)ast;
-        if(node->op == ASTOP_UPLUS) {
-            return +_interpret_ast(node->operand, vars);
-        }
-        if(node->op == ASTOP_UMINUS) {
-            return -_interpret_ast(node->operand, vars);
-        }
+
+        Object *operand = _interpret_ast(node->operand, vars);
+
+        Object *result = Object_uop(operand, node->op);
+
+        Object_destroy(operand);
+
+        return result;
     }
 
     fprintf(stderr, "Cannot interpret AstNode. Type: %d\n", ast->type);
@@ -77,12 +64,12 @@ double _interpret_ast(AstNode *ast, VarEntry **vars) {
 
 Interpreter *interpreter_new(void) {
     Interpreter *new = malloc_or_die(sizeof *new);
-    new->varmap = NULL;
+    new->varmap = MapObject_empty();
     return new;
 }
 
 void interpreter_free(Interpreter *this) {
-    varmap_free(this->varmap);
+    Object_destroy(this->varmap);
     free(this);
 }
 
@@ -90,8 +77,8 @@ Object *interpreter_parse_line(Interpreter *this, FILE *stream) {
     AstNode *ast = parser_parse(stream);
     if(!ast)
         return NULL;
-    double result = _interpret_ast(ast, &this->varmap);
+    Object *result = _interpret_ast(ast, this->varmap);
     ast_free(ast);
-    varmap_setval(&this->varmap, "_", result);
-    return DoubleObject_from_double(result);
+    Object_set(this->varmap, "_", result);
+    return Object_clone(result);
 }

@@ -1,12 +1,10 @@
 #ifndef INTERPRETER_H
 #define INTERPRETER_H
 
-#include "parser.h"
-#include "varmap.h"
-#include "object.h"
+#include "mapobj.h"
 
 typedef struct {
-    VarEntry *varmap;
+    Object *varmap;
 } Interpreter;
 
 Interpreter *interpreter_new(void);
