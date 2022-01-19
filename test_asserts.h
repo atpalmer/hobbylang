@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define TYPEFMT(arg)        _Generic((arg), int: "%d", double: "%f", unsigned: "%u", const char *: "\"%s\"", char *: "\"%s\"")
