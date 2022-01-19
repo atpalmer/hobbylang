@@ -3,35 +3,7 @@
 #include "parser.h"
 #include "token.h"
 #include "interpreter.h"
-#include "error.h"
-
-
-#define assert_equal_double(left, right)\
-    do{\
-        int cond = (left == right);\
-        const char *msg = (cond) ? "OK" : "FAIL";\
-        printf("%s (%s line %d): %f == %f <%s == %s>\n",\
-            msg, __FILE__, __LINE__, (double)left, (double)right, #left, #right);\
-        if(!(cond)) exit(-1);\
-    }while(0)
-
-#define assert_equal_int(left, right)\
-    do{\
-        int cond = (left == right);\
-        const char *msg = (cond) ? "OK" : "FAIL";\
-        printf("%s (%s line %d): %d == %d <%s == %s>\n",\
-            msg, __FILE__, __LINE__, left, right, #left, #right);\
-        if(!(cond)) exit(-1);\
-    }while(0)
-
-#define assert_equal_string(left, right)\
-    do{\
-        int cond = (strcmp((left), (right)) == 0);\
-        const char *msg = (cond) ? "OK" : "FAIL";\
-        printf("%s (%s line %d): %s == %s <%s == %s>\n",\
-            msg, __FILE__, __LINE__, (left), (right), #left, #right);\
-        if(!(cond)) exit(-1);\
-    }while(0)
+#include "test_asserts.h"
 
 
 void test_lexer(void) {
@@ -49,77 +21,77 @@ void test_lexer(void) {
     Token *curr;
 
     curr = token_next(stream);
-    assert_equal_int(token_type(curr), TOKT_IDENTIFIER);
-    assert_equal_string(token_varname(curr), "x");
+    assert_equal(token_type(curr), TOKT_IDENTIFIER);
+    assert_equal(token_varname(curr), "x");
 
     curr = token_next(stream);
-    assert_equal_int(token_type(curr), TOKT_EQ);
+    assert_equal(token_type(curr), TOKT_EQ);
 
     curr = token_next(stream);
-    assert_equal_int(token_type(curr), TOKT_NUMBER);
-    assert_equal_double(token_number(curr), 2);
+    assert_equal(token_type(curr), TOKT_NUMBER);
+    assert_equal(token_number(curr), 2);
 
     curr = token_next(stream);
-    assert_equal_int(token_type(curr), TOKT_NEWLINE);
+    assert_equal(token_type(curr), TOKT_NEWLINE);
 
     curr = token_next(stream);
-    assert_equal_int(token_type(curr), TOKT_IDENTIFIER);
-    assert_equal_string(token_varname(curr), "x");
+    assert_equal(token_type(curr), TOKT_IDENTIFIER);
+    assert_equal(token_varname(curr), "x");
 
     curr = token_next(stream);
-    assert_equal_int(token_type(curr), TOKT_STAR);
+    assert_equal(token_type(curr), TOKT_STAR);
 
     curr = token_next(stream);
-    assert_equal_int(token_type(curr), TOKT_NUMBER);
-    assert_equal_double(token_number(curr), 1.5);
+    assert_equal(token_type(curr), TOKT_NUMBER);
+    assert_equal(token_number(curr), 1.5);
 
     curr = token_next(stream);
-    assert_equal_int(token_type(curr), TOKT_PLUS);
+    assert_equal(token_type(curr), TOKT_PLUS);
 
     curr = token_next(stream);
-    assert_equal_int(token_type(curr), TOKT_LPAREN);
+    assert_equal(token_type(curr), TOKT_LPAREN);
 
     curr = token_next(stream);
-    assert_equal_int(token_type(curr), TOKT_NUMBER);
-    assert_equal_double(token_number(curr), 123.0);
+    assert_equal(token_type(curr), TOKT_NUMBER);
+    assert_equal(token_number(curr), 123.0);
 
     curr = token_next(stream);
-    assert_equal_int(token_type(curr), TOKT_MINUS);
+    assert_equal(token_type(curr), TOKT_MINUS);
 
     curr = token_next(stream);
-    assert_equal_int(token_type(curr), TOKT_NUMBER);
-    assert_equal_double(token_number(curr), 456.0);
+    assert_equal(token_type(curr), TOKT_NUMBER);
+    assert_equal(token_number(curr), 456.0);
 
     curr = token_next(stream);
-    assert_equal_int(token_type(curr), TOKT_RPAREN);
+    assert_equal(token_type(curr), TOKT_RPAREN);
 
     curr = token_next(stream);
-    assert_equal_int(token_type(curr), TOKT_NEWLINE);
+    assert_equal(token_type(curr), TOKT_NEWLINE);
 
     curr = token_next(stream);
-    assert_equal_int(token_type(curr), TOKT_IDENTIFIER);
-    assert_equal_string(token_varname(curr), "x");
+    assert_equal(token_type(curr), TOKT_IDENTIFIER);
+    assert_equal(token_varname(curr), "x");
 
     curr = token_next(stream);
-    assert_equal_int(token_type(curr), TOKT_DUBSLASH);
+    assert_equal(token_type(curr), TOKT_DUBSLASH);
 
     curr = token_next(stream);
-    assert_equal_int(token_type(curr), TOKT_NUMBER);
-    assert_equal_double(token_number(curr), 1.5);
+    assert_equal(token_type(curr), TOKT_NUMBER);
+    assert_equal(token_number(curr), 1.5);
 
     curr = token_next(stream);
-    assert_equal_int(token_type(curr), TOKT_NEWLINE);
+    assert_equal(token_type(curr), TOKT_NEWLINE);
 
     curr = token_next(stream);
-    assert_equal_int(token_type(curr), TOKT_IDENTIFIER);
-    assert_equal_string(token_varname(curr), "x");
+    assert_equal(token_type(curr), TOKT_IDENTIFIER);
+    assert_equal(token_varname(curr), "x");
 
     curr = token_next(stream);
-    assert_equal_int(token_type(curr), TOKT_DUBEQ);
+    assert_equal(token_type(curr), TOKT_DUBEQ);
 
     curr = token_next(stream);
-    assert_equal_int(token_type(curr), TOKT_NUMBER);
-    assert_equal_double(token_number(curr), 2);
+    assert_equal(token_type(curr), TOKT_NUMBER);
+    assert_equal(token_number(curr), 2);
 
     fclose(stream);
 }
@@ -127,7 +99,7 @@ void test_lexer(void) {
 #define _test_parser_next(interp, stream, expected)\
     do{\
         Object *result = interpreter_parse_line(interp, stream);\
-        assert_equal_double(Object_as_double(result), expected);\
+        assert_equal(Object_as_double(result), expected);\
         Object_destroy(result);\
     }while(0)
 
