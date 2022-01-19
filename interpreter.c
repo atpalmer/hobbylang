@@ -11,50 +11,47 @@
 #include "parser.h"
 #include "syswrap.h"
 
-Object *_interpret_ast(AstNode *ast, Object *vars) {
-    if(ast->type == ASTT_DOUBLE) {
+static Object *_interpret_ast(AstNode *ast, Object *vars);
+
+static Object *_interpret_assignment(AstAssignmentNode *node, Object *vars) {
+    Object *val = _interpret_ast(node->value, vars);
+    Object_set(vars, node->id->value, val);
+    return Object_clone(val);
+}
+
+static Object *_interpret_binop(AstBinOpNode *node, Object *vars) {
+    Object *left = _interpret_ast(node->left, vars);
+    Object *right = _interpret_ast(node->right, vars);
+
+    Object *result = Object_binop(left, right, node->op);
+
+    Object_destroy(left);
+    Object_destroy(right);
+
+    return result;
+}
+
+static Object *_interpret_uop(AstUnaryOpNode *node, Object *vars) {
+    Object *operand = _interpret_ast(node->operand, vars);
+    Object *result = Object_uop(operand, node->op);
+    Object_destroy(operand);
+    return result;
+}
+
+static Object *_interpret_ast(AstNode *ast, Object *vars) {
+    switch(ast->type) {
+    case ASTT_DOUBLE:
         return DoubleObject_from_double(((AstDoubleNode *)ast)->value);
-    }
-
-    if(ast->type == ASTT_ID) {
+    case ASTT_ID:
         return Object_get(vars, ((AstIdentifierNode *)ast)->value);
-    }
-
-    if(ast->type == ASTT_ASSIGN) {
-        AstAssignmentNode *node = (AstAssignmentNode *)ast;
-
-        const char *id = ((AstIdentifierNode *)node->id)->value;
-
-        Object *val = _interpret_ast(node->value, vars);
-        Object_set(vars, id, val);
-
-        return Object_clone(val);
-    }
-
-    if(ast->type == ASTT_BINOP) {
-        AstBinOpNode *node = (AstBinOpNode *)ast;
-
-        Object *left = _interpret_ast(node->left, vars);
-        Object *right = _interpret_ast(node->right, vars);
-
-        Object *result = Object_binop(left, right, node->op);
-
-        Object_destroy(left);
-        Object_destroy(right);
-
-        return result;
-    }
-
-    if(ast->type == ASTT_UOP) {
-        AstUnaryOpNode *node = (AstUnaryOpNode *)ast;
-
-        Object *operand = _interpret_ast(node->operand, vars);
-
-        Object *result = Object_uop(operand, node->op);
-
-        Object_destroy(operand);
-
-        return result;
+    case ASTT_ASSIGN:
+        return _interpret_assignment((AstAssignmentNode *)ast, vars);
+    case ASTT_BINOP:
+        return _interpret_binop((AstBinOpNode *)ast, vars);
+    case ASTT_UOP:
+        return _interpret_uop((AstUnaryOpNode *)ast, vars);
+    default:
+        break;
     }
 
     fprintf(stderr, "Cannot interpret AstNode. Type: %d\n", ast->type);

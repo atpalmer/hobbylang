@@ -36,7 +36,7 @@ AstNode *parser_expr_ast(Parser *this);
 AstNode *parser_handle_assignment_ast(Parser *this, const char *key) {
     parser_accept(this, TOKT_EQ);
 
-    AstNode *id = ast_id_new(key);
+    AstIdentifierNode *id = (AstIdentifierNode *)ast_id_new(key);
     AstNode *value = parser_expr_ast(this);
 
     return ast_assign_new(id, value);

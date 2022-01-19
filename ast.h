@@ -27,7 +27,7 @@ typedef struct {
 
 typedef struct {
     AstNode base;
-    AstNode *id;
+    AstIdentifierNode *id;
     AstNode *value;
 } AstAssignmentNode;
 
@@ -47,7 +47,7 @@ typedef struct {
 void ast_free(AstNode *this);
 AstNode *ast_double_new(double value);
 AstNode *ast_id_new(const char *value);
-AstNode *ast_assign_new(AstNode *id, AstNode *value);
+AstNode *ast_assign_new(AstIdentifierNode *id, AstNode *value);
 AstNode *ast_binop_new(BinaryOp op, AstNode *left, AstNode *right);
 AstNode *ast_uop_new(UnaryOp op, AstNode *operand);
 

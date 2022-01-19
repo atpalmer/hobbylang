@@ -10,7 +10,7 @@ void ast_free(AstNode *this) {
     case ASTT_ID:
         break;
     case ASTT_ASSIGN:
-        ast_free(((AstAssignmentNode *)this)->id);
+        ast_free((AstNode *)((AstAssignmentNode *)this)->id);
         ast_free(((AstAssignmentNode *)this)->value);
         break;
     case ASTT_BINOP:
@@ -45,10 +45,10 @@ AstNode *ast_id_new(const char *value) {
     return (AstNode *)new;
 }
 
-AstNode *ast_assign_new(AstNode *id, AstNode *value) {
+AstNode *ast_assign_new(AstIdentifierNode *id, AstNode *value) {
     AstAssignmentNode *new = malloc(sizeof *new);
     _base_init(&new->base, ASTT_ASSIGN);
-    new->id= id;
+    new->id = id;
     new->value = value;
     return (AstNode *)new;
 }
