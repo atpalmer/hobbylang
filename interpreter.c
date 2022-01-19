@@ -10,6 +10,7 @@
 #include "interpreter.h"
 #include "parser.h"
 #include "syswrap.h"
+#include "error.h"
 
 static Object *_interpret_ast(AstNode *ast, Object *vars);
 
@@ -54,8 +55,7 @@ static Object *_interpret_ast(AstNode *ast, Object *vars) {
         break;
     }
 
-    fprintf(stderr, "Cannot interpret AstNode. Type: %d\n", ast->type);
-    exit(-1);
+    die_f(InternalError, "Cannot interpret AstNode. Type: %d\n", ast->type);
 }
 
 Interpreter *interpreter_new(void) {

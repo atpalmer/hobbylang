@@ -1,4 +1,3 @@
-#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,32 +8,20 @@
 void *malloc_or_die(size_t size) {
     void *p = malloc(size);
     if(!p)
-        goto die;
+        sysdie(MemoryError);
     return p;
-
-die:
-    perror(ERRSTR_MemoryError);
-    exit(errno);
 }
 
 FILE *fopen_or_die(const char *filename, const char *mode) {
     FILE *fp = fopen(filename, mode);
     if(!fp)
-        goto die;
+        sysdie(OSError);
     return fp;
-
-die:
-    perror(ERRSTR_OSError);
-    exit(errno);
 }
 
 char *strdup_or_die(const char *s) {
     char *p = strdup(s);
     if(!p)
-        goto die;
+        sysdie(MemoryError);
     return p;
-
-die:
-    perror(ERRSTR_MemoryError);
-    exit(errno);
 }

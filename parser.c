@@ -85,9 +85,9 @@ AstNode *parser_atom_ast(Parser *this) {
         break;
     }
 
-    fprintf(stderr, "TokenType Error: Cannot parse atom. Position: %ld. Found: '%c' (%d).\n",
+    die_f(ParseError,
+        "Cannot parse atom. Position: %ld. Found: '%c' (%d).\n",
         ftell(this->stream), token_type(curr), token_type(curr));
-    exit(-1);
 }
 
 AstNode *parser_signed_atom_ast(Parser *this) {

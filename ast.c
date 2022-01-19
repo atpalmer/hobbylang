@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ast.h"
+#include "error.h"
 
 void ast_free(AstNode *this) {
     switch(this->type) {
@@ -21,8 +22,7 @@ void ast_free(AstNode *this) {
         ast_free(((AstUnaryOpNode *)this)->operand);
         break;
     default:
-        fprintf(stderr, "Illegal AstNodeType: %d\n", this->type);
-        exit(-1);
+        die_f(InternalError, "Illegal AstNodeType: %d\n", this->type);
     }
     free(this);
 }

@@ -4,6 +4,7 @@
 #include "object.h"
 #include "doubleobj.h"
 #include "optype.h"
+#include "error.h"
 
 typedef struct {
     Object base;
@@ -61,8 +62,7 @@ static Object *DoubleObject_binop(Object *this, Object *other, BinaryOp op) {
         result = pow(Object_as_double(this), Object_as_double(other));
         break;
     default:
-        fprintf(stderr, "DoubleObject_binop: Invalid operator, %d\n", op);
-        exit(-1);
+        die_f(InternalError, "Invalid operator: %d\n", op);
     }
 
     return DoubleObject_from_double(result);
@@ -79,8 +79,7 @@ static Object *DoubleObject_uop(Object *this, UnaryOp op) {
         result = -Object_as_double(this);
         break;
     default:
-        fprintf(stderr, "DoubleObject_uop: Invalid operator, %d\n", op);
-        exit(-1);
+        die_f(InternalError, "Invalid operator: %d\n", op);
     }
 
     return DoubleObject_from_double(result);

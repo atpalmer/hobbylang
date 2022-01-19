@@ -121,9 +121,9 @@ TokenType token_type(Token *this) {
 Token *token_ensure_type(Token *this, TokenType expect) {
     if(token_type(this) == expect)
         return this;
-    fprintf(stderr, "TokenTypeError: Expected: %d. Received: %d\n",
+    die_f(LexError,
+        "Expected: %d. Received: %d\n",
         expect, token_type(this));
-    exit(-1);
 }
 
 double token_number(Token *this) {
@@ -149,8 +149,7 @@ static Token *read_token(FILE *stream) {
     if(result)
         return result;
 
-    fprintf(stderr, "Lex error. Unhandled char at pos %ld\n", ftell(stream));
-    exit(-1);
+    die_f(LexError, "Unhandled char at pos %ld\n", ftell(stream));
 }
 
 Token *token_next(FILE *stream) {

@@ -3,27 +3,36 @@
 #include "parser.h"
 #include "token.h"
 #include "interpreter.h"
+#include "error.h"
 
-static void assert_equal_int(int left, int right) {
-    if(left == right)
-        printf("OK: %d == %d\n", left, right);
-    else
-        fprintf(stderr, "ERROR: %d != %d\n", left, right);
-}
 
-static void assert_equal_double(double left, double right) {
-    if(left == right)
-        printf("OK: %f == %f\n", left, right);
-    else
-        fprintf(stderr, "ERROR: %f != %f\n", left, right);
-}
+#define assert_equal_double(left, right)\
+    do{\
+        int cond = (left == right);\
+        const char *msg = (cond) ? "OK" : "FAIL";\
+        printf("%s (%s line %d): %f == %f <%s == %s>\n",\
+            msg, __FILE__, __LINE__, (double)left, (double)right, #left, #right);\
+        if(!(cond)) exit(-1);\
+    }while(0)
 
-static void assert_equal_string(const char *left, const char *right) {
-    if(strcmp(left, right) == 0)
-        printf("OK: \"%s\" == \"%s\"\n", left, right);
-    else
-        fprintf(stderr, "ERROR: \"%s\" != \"%s\"\n", left, right);
-}
+#define assert_equal_int(left, right)\
+    do{\
+        int cond = (left == right);\
+        const char *msg = (cond) ? "OK" : "FAIL";\
+        printf("%s (%s line %d): %d == %d <%s == %s>\n",\
+            msg, __FILE__, __LINE__, left, right, #left, #right);\
+        if(!(cond)) exit(-1);\
+    }while(0)
+
+#define assert_equal_string(left, right)\
+    do{\
+        int cond = (strcmp((left), (right)) == 0);\
+        const char *msg = (cond) ? "OK" : "FAIL";\
+        printf("%s (%s line %d): %s == %s <%s == %s>\n",\
+            msg, __FILE__, __LINE__, (left), (right), #left, #right);\
+        if(!(cond)) exit(-1);\
+    }while(0)
+
 
 void test_lexer(void) {
     static const char *PROGRAM =
@@ -115,11 +124,12 @@ void test_lexer(void) {
     fclose(stream);
 }
 
-void _test_parser_next(Interpreter *interp, FILE *stream, double expected) {
-    Object *result = interpreter_parse_line(interp, stream);
-    assert_equal_double(Object_as_double(result), expected);
-    Object_destroy(result);
-}
+#define _test_parser_next(interp, stream, expected)\
+    do{\
+        Object *result = interpreter_parse_line(interp, stream);\
+        assert_equal_double(Object_as_double(result), expected);\
+        Object_destroy(result);\
+    }while(0)
 
 void test_parser(void) {
     static const char *PROGRAM =
@@ -138,6 +148,8 @@ void test_parser(void) {
             "10 - 20 < 10000000\n"
             "2 + 2 != 4\n"
             ;
+
+    printf("%s\n", PROGRAM);
 
     FILE *stream = fmemopen((void *)PROGRAM, strlen(PROGRAM), "r");
 
