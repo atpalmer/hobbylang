@@ -20,32 +20,29 @@ Object *_interpret_ast(AstNode *ast, Object *vars) {
         return Object_get(vars, ((AstIdentifierNode *)ast)->value);
     }
 
+    if(ast->type == ASTT_ASSIGN) {
+        AstAssignmentNode *node = (AstAssignmentNode *)ast;
+
+        const char *id = ((AstIdentifierNode *)node->id)->value;
+
+        Object *val = _interpret_ast(node->value, vars);
+        Object_set(vars, id, val);
+
+        return Object_clone(val);
+    }
+
     if(ast->type == ASTT_BINOP) {
         AstBinOpNode *node = (AstBinOpNode *)ast;
 
-        if(node->op == BINOP_ASSIGN) {
-            if(node->left->type != ASTT_ID) {
-                fprintf(stderr, "Cannot assign to AstNode type: %d\n", node->left->type);
-                exit(-1);
-            }
-            const char *id = ((AstIdentifierNode *)node->left)->value;
+        Object *left = _interpret_ast(node->left, vars);
+        Object *right = _interpret_ast(node->right, vars);
 
-            Object *val = _interpret_ast(node->right, vars);
-            Object_set(vars, id, val);
+        Object *result = Object_binop(left, right, node->op);
 
-            return Object_clone(val);
-        }
-        else {
-            Object *left = _interpret_ast(node->left, vars);
-            Object *right = _interpret_ast(node->right, vars);
+        Object_destroy(left);
+        Object_destroy(right);
 
-            Object *result = Object_binop(left, right, node->op);
-
-            Object_destroy(left);
-            Object_destroy(right);
-
-            return result;
-        }
+        return result;
     }
 
     if(ast->type == ASTT_UOP) {

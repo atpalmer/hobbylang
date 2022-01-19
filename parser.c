@@ -39,7 +39,7 @@ AstNode *parser_handle_assignment_ast(Parser *this, const char *key) {
     AstNode *id = ast_id_new(key);
     AstNode *value = parser_expr_ast(this);
 
-    return ast_binop_new(BINOP_ASSIGN, id, value);
+    return ast_assign_new(id, value);
 }
 
 AstNode *parser_handle_variable_ast(Parser *this) {

@@ -13,7 +13,6 @@ typedef enum {
     BINOP_FLOORDIV,
     BINOP_MOD,
     BINOP_POW,
-    BINOP_ASSIGN,
 } BinaryOp;
 
 typedef enum {

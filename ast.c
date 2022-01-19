@@ -9,6 +9,10 @@ void ast_free(AstNode *this) {
         break;
     case ASTT_ID:
         break;
+    case ASTT_ASSIGN:
+        ast_free(((AstAssignmentNode *)this)->id);
+        ast_free(((AstAssignmentNode *)this)->value);
+        break;
     case ASTT_BINOP:
         ast_free(((AstBinOpNode *)this)->left);
         ast_free(((AstBinOpNode *)this)->right);
@@ -38,6 +42,14 @@ AstNode *ast_id_new(const char *value) {
     AstIdentifierNode *new = malloc(sizeof *new + (sizeof(char) * (strlen(value) + 1)));
     _base_init(&new->base, ASTT_ID);
     strcpy(new->value, value);
+    return (AstNode *)new;
+}
+
+AstNode *ast_assign_new(AstNode *id, AstNode *value) {
+    AstAssignmentNode *new = malloc(sizeof *new);
+    _base_init(&new->base, ASTT_ASSIGN);
+    new->id= id;
+    new->value = value;
     return (AstNode *)new;
 }
 
