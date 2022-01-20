@@ -35,8 +35,10 @@ int main(void) {
         const char *program = "42\n";
         FILE *stream = fmemopen((void *)program, strlen(program), "r");
 
-        AstNode *node = parser_parse(stream);
-        assert_double_node(node, 42);
+        AstNode *topnode = parser_parse(stream);
+        assert_equal(topnode->type, ASTT_BLOCK);
+        assert_equal(((AstBlockNode *)topnode)->count, 1);
+        assert_double_node(((AstBlockNode *)topnode)->nodes[0], 42);
 
         fclose(stream);
     }
@@ -46,12 +48,14 @@ int main(void) {
         const char *program = "x = 2 + 1\n";
         FILE *stream = fmemopen((void *)program, strlen(program), "r");
 
-        AstNode *_topnode = parser_parse(stream);
+        AstNode *topnode = parser_parse(stream);
+        assert_equal(topnode->type, ASTT_BLOCK);
+        assert_equal(((AstBlockNode *)topnode)->count, 1);
 
-        AstAssignmentNode *topnode = assert_assignment_node(_topnode);
-        assert_id_node(topnode->id, "x");
+        AstAssignmentNode *assign = assert_assignment_node(((AstBlockNode *)topnode)->nodes[0]);
+        assert_id_node(assign->id, "x");
 
-        AstBinOpNode *valnode = assert_binop_node(topnode->value, BINOP_PLUS);
+        AstBinOpNode *valnode = assert_binop_node(assign->value, BINOP_PLUS);
         assert_double_node(valnode->left, 2);
         assert_double_node(valnode->right, 1);
 

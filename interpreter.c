@@ -39,6 +39,18 @@ static Object *_interpret_uop(AstUnaryOpNode *node, Object *vars) {
     return result;
 }
 
+static Object *_interpret_block(AstBlockNode *block, Object *vars) {
+    if(block->count < 1)
+        die(InternaleError, "AstBlockNode must contain at least one child");
+
+    unsigned i = 0;
+    for(; i < block->count - 1; ++i) {
+        Object *discard = _interpret_ast(block->nodes[i], vars);
+        Object_destroy(discard);  /* discard intermediate results */
+    }
+    return _interpret_ast(block->nodes[i], vars);
+}
+
 static Object *_interpret_ast(AstNode *ast, Object *vars) {
     switch(ast->type) {
     case ASTT_DOUBLE:
@@ -51,6 +63,8 @@ static Object *_interpret_ast(AstNode *ast, Object *vars) {
         return _interpret_binop((AstBinOpNode *)ast, vars);
     case ASTT_UOP:
         return _interpret_uop((AstUnaryOpNode *)ast, vars);
+    case ASTT_BLOCK:
+        return _interpret_block((AstBlockNode *)ast, vars);
     default:
         break;
     }

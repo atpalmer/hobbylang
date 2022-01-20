@@ -4,6 +4,12 @@
 #include "ast.h"
 #include "error.h"
 
+static void ast_block_free(AstBlockNode *block) {
+    for(unsigned i = 0; i < block->count; ++i) {
+        ast_free(block->nodes[i]);
+    }
+}
+
 void ast_free(AstNode *this) {
     switch(this->type) {
     case ASTT_DOUBLE:
@@ -20,6 +26,9 @@ void ast_free(AstNode *this) {
         break;
     case ASTT_UOP:
         ast_free(((AstUnaryOpNode *)this)->operand);
+        break;
+    case ASTT_BLOCK:
+        ast_block_free((AstBlockNode *)this);
         break;
     default:
         die_f(InternalError, "Illegal AstNodeType: %d\n", this->type);
@@ -68,4 +77,13 @@ AstNode *ast_uop_new(UnaryOp op, AstNode *operand) {
     new->op = op;
     new->operand = operand;
     return (AstNode *)new;
+}
+
+void ast_block_append(AstBlockNode **this, AstNode *node) {
+    size_t count = *this ? (*this)->count + 1 : 1;
+    AstBlockNode *new = realloc(*this, sizeof(AstBlockNode) + sizeof(void *) * count);
+    _base_init(&new->base, ASTT_BLOCK);
+    new->count = count;
+    new->nodes[count - 1] = node;
+    *this = new;
 }

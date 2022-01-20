@@ -218,8 +218,14 @@ AstNode *parser_line(Parser *this) {
 }
 
 AstNode *parser_parse(FILE *stream) {
+    AstBlockNode *block = NULL;
     Parser *parser = parser_new(stream);
-    AstNode *result = parser_line(parser);
+    for(;;) {
+        AstNode *result = parser_line(parser);
+        if(!result)
+            break;
+        ast_block_append(&block, result);
+    }
     parser_free(parser);
-    return result;
+    return (AstNode *)block;
 }
