@@ -76,23 +76,11 @@ static Object *_interpret_ast(AstNode *ast, Object *vars) {
     die_f(InternalError, "Cannot interpret AstNode. Type: %d\n", ast->type);
 }
 
-Interpreter *interpreter_new(void) {
-    Interpreter *new = malloc_or_die(sizeof *new);
-    new->varmap = MapObject_empty();
-    return new;
-}
-
-void interpreter_free(Interpreter *this) {
-    Object_destroy(this->varmap);
-    free(this);
-}
-
-Object *interpreter_parse_line(Interpreter *this, FILE *stream) {
+Object *interpreter_eval(FILE *stream, Object *varmap) {
     AstNode *ast = parser_parse(stream);
     if(!ast)
         return NULL;
-    Object *result = _interpret_ast(ast, this->varmap);
+    Object *result = _interpret_ast(ast, varmap);
     ast_free(ast);
-    Object_set(this->varmap, "_", result);
-    return Object_clone(result);
+    return result;
 }

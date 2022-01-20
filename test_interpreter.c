@@ -6,11 +6,11 @@
 #define test_case(text, expected)\
     {\
         FILE *stream = fmemopen((void *)text, strlen(text), "r");\
-        Interpreter *interp = interpreter_new();\
-        Object *result = interpreter_parse_line(interp, stream);\
+        Object *varmap = MapObject_empty();\
+        Object *result = interpreter_eval(stream, varmap);\
         assert_equal(Object_as_double(result), expected);\
         Object_destroy(result);\
-        interpreter_free(interp);\
+        Object_destroy(varmap);\
         fclose(stream);\
     }
 

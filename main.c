@@ -2,9 +2,10 @@
 #include "syswrap.h"
 #include "interpreter.h"
 #include "object.h"
+#include "mapobj.h"
 
 int interactive(void) {
-    Interpreter *interp = interpreter_new();
+    Object *varmap = MapObject_empty();
 
     for(;;) {
         printf(">>> ");
@@ -15,11 +16,11 @@ int interactive(void) {
             goto loopend;
 
         FILE *stream = fmemopen(line, bytes_read, "r");
-        Object *value = interpreter_parse_line(interp, stream);
+        Object *value = interpreter_eval(stream, varmap);
         if(!value)
             exit(-1);
         Object_println(value);
-        Object_destroy(value);
+        Object_set(varmap, "_", value);  /* steals value */
         fclose(stream);
 
 loopend:
@@ -28,7 +29,7 @@ loopend:
     }
 
     printf("\n");
-    interpreter_free(interp);
+    Object_destroy(varmap);
     return 0;
 }
 
@@ -38,10 +39,8 @@ int main(int argc, const char **argv) {
 
     FILE *stream = fopen_or_die(argv[1], "r");
 
-    Interpreter *interp = interpreter_new();
-
     for(;;) {
-        Object *value = interpreter_parse_line(interp, stream);
+        Object *value = interpreter_eval(stream, NULL);
         if(!value)
             break;
         Object_println(value);
@@ -49,7 +48,6 @@ int main(int argc, const char **argv) {
     }
 
     printf("\n");
-    interpreter_free(interp);
     fclose(stream);
     return 0;
 }
