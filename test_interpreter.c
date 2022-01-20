@@ -3,7 +3,7 @@
 #include "test_asserts.h"
 
 
-#define _test_parser_next(interp, stream, expected)\
+#define test_next(interp, stream, expected)\
     do{\
         Object *result = interpreter_parse_line(interp, stream);\
         assert_equal(Object_as_double(result), expected);\
@@ -34,20 +34,20 @@ int main(void) {
 
     Interpreter *interp = interpreter_new();
 
-    _test_parser_next(interp, stream, 42);
-    _test_parser_next(interp, stream, 3);
-    _test_parser_next(interp, stream, 8);
-    _test_parser_next(interp, stream, 18);
-    _test_parser_next(interp, stream, 1);
-    _test_parser_next(interp, stream, 7);
-    _test_parser_next(interp, stream, 5);
-    _test_parser_next(interp, stream, 35);
-    _test_parser_next(interp, stream, 3);
-    _test_parser_next(interp, stream, 48);
-    _test_parser_next(interp, stream, 1);
-    _test_parser_next(interp, stream, 1);
-    _test_parser_next(interp, stream, 1);
-    _test_parser_next(interp, stream, 0);
+    test_next(interp, stream, 42);
+    test_next(interp, stream, 3);
+    test_next(interp, stream, 8);
+    test_next(interp, stream, 18);
+    test_next(interp, stream, 1);
+    test_next(interp, stream, 7);
+    test_next(interp, stream, 5);
+    test_next(interp, stream, 35);
+    test_next(interp, stream, 3);
+    test_next(interp, stream, 48);
+    test_next(interp, stream, 1);
+    test_next(interp, stream, 1);
+    test_next(interp, stream, 1);
+    test_next(interp, stream, 0);
 
     interpreter_free(interp);
     fclose(stream);
