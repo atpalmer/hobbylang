@@ -2,7 +2,7 @@ P=calc
 TESTP=test
 OBJECTS=token.o parser.o ast.o interpreter.o mapobj.o syswrap.o doubleobj.o
 MAIN_OBJECTS=main.o
-TEST_OBJECTS=test_interpreter.o test_lexer.o
+TEST_OBJECTS=test_interpreter.o test_lexer.o test_parser.o
 CFLAGS=-Wall -Wextra -pedantic -g
 
 $P: $(OBJECTS) $(MAIN_OBJECTS)
