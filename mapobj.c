@@ -15,6 +15,7 @@ void mapentry_set(struct mapentry **head, const char *key, Object *value) {
     struct mapentry **curr = head;
     while(*curr) {
         if(strcmp((*curr)->key, key) == 0) {
+            Object_destroy((*curr)->value);
             (*curr)->value = value;
             return;
         }
