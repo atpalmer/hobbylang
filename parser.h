@@ -9,8 +9,6 @@ typedef struct {
     Token *curr;
 } Parser;
 
-Parser *parser_new(FILE *stream);
-void parser_free(Parser *this);
 AstNode *parser_parse(FILE *stream);
 
 #endif

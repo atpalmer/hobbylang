@@ -13,7 +13,7 @@ test_%: $(OBJECTS) test_%.o
 	"./$(TESTP)"
 	rm "./$(TESTP)"
 
-test: test_lexer test_interpreter
+test: test_lexer test_parser test_interpreter
 
 .PHONY: clean all run install
 
