@@ -52,6 +52,20 @@ typedef struct {
     struct mapentry *head;
 } MapObject;
 
+static Object *MapObject_clone(Object *_this) {
+    MapObject *this = (MapObject *)_this;
+    Object *new = MapObject_empty();
+
+    struct mapentry **read = &this->head;
+    while(*read) {
+        Object *valclone = Object_clone((*read)->value);
+        mapentry_set(&((MapObject *)new)->head, (*read)->key, valclone);
+        read = &(*read)->next;
+    }
+
+    return new;
+}
+
 static void MapObject_destroy(Object *this) {
     mapentry_free(((MapObject *)this)->head);
     free(this);
@@ -67,7 +81,7 @@ static void MapObject_set(Object *this, const char *key, Object *value) {
 
 static const ObjectInterface MapObject_as_object = {
     .name = "MutableMap",
-    .clone = NULL,
+    .clone = MapObject_clone,
     .destroy = MapObject_destroy,
     .to_stream = NULL,
     .as_double = NULL,

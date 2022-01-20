@@ -39,16 +39,20 @@ static Object *_interpret_uop(AstUnaryOpNode *node, Object *vars) {
     return result;
 }
 
-static Object *_interpret_block(AstBlockNode *block, Object *vars) {
+static Object *_interpret_block(AstBlockNode *block, Object *_vars) {
     if(block->count < 1)
         die(InternaleError, "AstBlockNode must contain at least one child");
 
+    Object *scope_vars = Object_clone(_vars);
+
     unsigned i = 0;
     for(; i < block->count - 1; ++i) {
-        Object *discard = _interpret_ast(block->nodes[i], vars);
+        Object *discard = _interpret_ast(block->nodes[i], scope_vars);
         Object_destroy(discard);  /* discard intermediate results */
     }
-    return _interpret_ast(block->nodes[i], vars);
+    Object *result = _interpret_ast(block->nodes[i], scope_vars);
+    Object_destroy(scope_vars);
+    return result;
 }
 
 static Object *_interpret_ast(AstNode *ast, Object *vars) {
