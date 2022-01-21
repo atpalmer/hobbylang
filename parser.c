@@ -47,11 +47,18 @@ AstNode *parser_handle_variable_ast(Parser *this) {
     char *key = strdup_or_die(token_varname(var));
     parser_accept(this, TOKT_IDENTIFIER);
 
-    Token *eq = parser_curr(this);
+    Token *op = parser_curr(this);
 
-    AstNode *result = token_type(eq) == TOKT_EQ
-        ? parser_handle_assignment_ast(this, key)
-        : ast_id_new(key);
+    AstNode *result = NULL;
+
+    switch(token_type(op)) {
+    case TOKT_EQ:
+        result = parser_handle_assignment_ast(this, key);
+        break;
+    default:
+        result = ast_id_new(key);
+        break;
+    }
 
     free(key);
     return result;
