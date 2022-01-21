@@ -15,15 +15,15 @@ test_%: $(OBJECTS) test_%.o
 
 test: test_lexer test_parser test_eval
 
-.PHONY: clean all run install
+.PHONY: clean run
 
 clean:
 	-rm $(OBJECTS) $(MAIN_OBJECTS) $(TEST_OBJECTS) $(TESTP) $P
 
-all: clean $P test
-
-run: all
+run: clean $P test
+	"./$P" "samples/sample1.calc"
+	"./$P" "samples/sample2.calc"
 	"./$P" "samples/sample3.calc"
 
-install: all
-	mv ./calc /usr/local/bin
+interactive: clean $P
+	"./$P"
