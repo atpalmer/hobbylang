@@ -84,6 +84,8 @@ Object *eval_stream(FILE *stream, Object *varmap) {
 
 Object *eval_string(const char *program, Object *varmap) {
     FILE *stream = fmemopen((void *)program, strlen(program), "r");
+    if(!stream)
+        return NULL;
     Object *result = eval_stream(stream, varmap);
     fclose(stream);
     return result;
