@@ -3,7 +3,7 @@
 #include <string.h>
 #include "ast.h"
 #include "object.h"
-#include "doubleobj.h"
+#include "numberobjs.h"
 #include "mapobj.h"
 #include "optype.h"
 #include "eval.h"
@@ -55,7 +55,7 @@ static Object *_eval_block(AstBlockNode *block, Object *_vars) {
 Object *eval_ast(AstNode *ast, Object *vars) {
     switch(ast->type) {
     case ASTT_DOUBLE:
-        return DoubleObject_from_double(((AstDoubleNode *)ast)->value);
+        return F64Object_from_double(((AstDoubleNode *)ast)->value);
     case ASTT_ID:
         return Object_get(vars, ((AstIdentifierNode *)ast)->value);
     case ASTT_ASSIGN:

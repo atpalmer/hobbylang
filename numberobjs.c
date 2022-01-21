@@ -2,29 +2,29 @@
 #include <string.h>
 #include "syswrap.h"
 #include "object.h"
-#include "doubleobj.h"
+#include "numberobjs.h"
 #include "optype.h"
 #include "error.h"
 
 typedef struct {
     Object base;
     double value;
-} DoubleObject;
+} F64Object;
 
-static void DoubleObject_destroy(Object *this) {
+static void F64Object_destroy(Object *this) {
     free(this);
 }
 
-static int DoubleObject_to_stream(Object *this, FILE *out, const char *term) {
-    double value = ((DoubleObject *)this)->value;
+static int F64Object_to_stream(Object *this, FILE *out, const char *term) {
+    double value = ((F64Object *)this)->value;
     return fprintf(out, "%f%s", value, term);
 }
 
-static double DoubleObject_as_double(Object *this) {
-    return ((DoubleObject *)this)->value;
+static double F64Object_as_double(Object *this) {
+    return ((F64Object *)this)->value;
 }
 
-static Object *DoubleObject_binop(Object *this, Object *other, BinaryOp op) {
+static Object *F64Object_binop(Object *this, Object *other, BinaryOp op) {
     double result = 0.0;
 
     switch(op) {
@@ -65,10 +65,10 @@ static Object *DoubleObject_binop(Object *this, Object *other, BinaryOp op) {
         die_f(InternalError, "Invalid operator: %d\n", op);
     }
 
-    return DoubleObject_from_double(result);
+    return F64Object_from_double(result);
 }
 
-static Object *DoubleObject_uop(Object *this, UnaryOp op) {
+static Object *F64Object_uop(Object *this, UnaryOp op) {
     double result = 0.0;
 
     switch(op) {
@@ -82,28 +82,28 @@ static Object *DoubleObject_uop(Object *this, UnaryOp op) {
         die_f(InternalError, "Invalid operator: %d\n", op);
     }
 
-    return DoubleObject_from_double(result);
+    return F64Object_from_double(result);
 }
 
-static Object *DoubleObject_clone(Object *this) {
-    Object *new = malloc(sizeof(DoubleObject));
-    memcpy(new, this, sizeof(DoubleObject));
+static Object *F64Object_clone(Object *this) {
+    Object *new = malloc(sizeof(F64Object));
+    memcpy(new, this, sizeof(F64Object));
     return new;
 }
 
-ObjectInterface DoubleObject_as_object = {
-    .name = "Double",
-    .clone = DoubleObject_clone,
-    .destroy = DoubleObject_destroy,
-    .to_stream = DoubleObject_to_stream,
-    .as_double = DoubleObject_as_double,
-    .binop = DoubleObject_binop,
-    .uop = DoubleObject_uop,
+ObjectInterface F64Object_as_object = {
+    .name = "f64",
+    .clone = F64Object_clone,
+    .destroy = F64Object_destroy,
+    .to_stream = F64Object_to_stream,
+    .as_double = F64Object_as_double,
+    .binop = F64Object_binop,
+    .uop = F64Object_uop,
 };
 
-Object *DoubleObject_from_double(double value) {
-    DoubleObject *new = malloc_or_die(sizeof *new);
-    new->base = OBJECT_INIT(&DoubleObject_as_object);
+Object *F64Object_from_double(double value) {
+    F64Object *new = malloc_or_die(sizeof *new);
+    new->base = OBJECT_INIT(&F64Object_as_object);
     new->value = value;
     return (Object *)new;
 }
