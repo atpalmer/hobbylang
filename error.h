@@ -15,5 +15,6 @@
 #define sysdie(errstr)              die(errstr, strerror(errno))
 
 #define DEBUG_CRUMB__   fprintf(stderr, "DEBUG: %s: %s [line: %d]\n", __FILE__, __func__, __LINE__);
+#define DEBUG_PTR__(p)  fprintf(stderr, "DEBUG PTR: %s: %s [line: %d]; \"%s\" addr: %p\n", __FILE__, __func__, __LINE__, #p, (void *)p);
 
 #endif
