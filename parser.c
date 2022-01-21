@@ -33,18 +33,9 @@ void parser_accept(Parser *this, TokenType token_type) {
 
 AstNode *parser_expr_ast(Parser *this);
 
-AstNode *parser_handle_assignment_ast(Parser *this, const char *key) {
-    parser_accept(this, TOKT_EQ);
-
-    AstIdentifierNode *id = (AstIdentifierNode *)ast_id_new(key);
-    AstNode *value = parser_expr_ast(this);
-
-    return ast_assign_new(id, value);
-}
-
 AstNode *parser_handle_variable_ast(Parser *this) {
     Token *var = parser_curr(this);
-    char *key = strdup_or_die(token_varname(var));
+    AstNode *id = ast_id_new(token_varname(var));
     parser_accept(this, TOKT_IDENTIFIER);
 
     Token *op = parser_curr(this);
@@ -53,14 +44,15 @@ AstNode *parser_handle_variable_ast(Parser *this) {
 
     switch(token_type(op)) {
     case TOKT_EQ:
-        result = parser_handle_assignment_ast(this, key);
+        parser_accept(this, TOKT_EQ);
+        result = parser_expr_ast(this);
+        result = ast_assign_new((AstIdentifierNode *)id, result);
         break;
     default:
-        result = ast_id_new(key);
+        result = id;
         break;
     }
 
-    free(key);
     return result;
 }
 
