@@ -48,6 +48,46 @@ AstNode *parser_handle_variable_ast(Parser *this) {
         result = parser_expr_ast(this);
         result = ast_assign_new((AstIdentifierNode *)id, result);
         break;
+    case TOKT_PLUSEQ:
+        parser_accept(this, TOKT_PLUSEQ);
+        result = parser_expr_ast(this);
+        result = ast_binop_new(BINOP_PLUS, id, result);
+        result = ast_assign_new(
+            (AstIdentifierNode *)ast_id_clone((AstIdentifierNode *)id),
+            result);
+        break;
+    case TOKT_MINUSEQ:
+        parser_accept(this, TOKT_MINUSEQ);
+        result = parser_expr_ast(this);
+        result = ast_binop_new(BINOP_MINUS, id, result);
+        result = ast_assign_new(
+            (AstIdentifierNode *)ast_id_clone((AstIdentifierNode *)id),
+            result);
+        break;
+    case TOKT_STAREQ:
+        parser_accept(this, TOKT_STAREQ);
+        result = parser_expr_ast(this);
+        result = ast_binop_new(BINOP_MULT, id, result);
+        result = ast_assign_new(
+            (AstIdentifierNode *)ast_id_clone((AstIdentifierNode *)id),
+            result);
+        break;
+    case TOKT_SLASHEQ:
+        parser_accept(this, TOKT_SLASHEQ);
+        result = parser_expr_ast(this);
+        result = ast_binop_new(BINOP_DIV, id, result);
+        result = ast_assign_new(
+            (AstIdentifierNode *)ast_id_clone((AstIdentifierNode *)id),
+            result);
+        break;
+    case TOKT_DUBSLASHEQ:
+        parser_accept(this, TOKT_DUBSLASHEQ);
+        result = parser_expr_ast(this);
+        result = ast_binop_new(BINOP_FLOORDIV, id, result);
+        result = ast_assign_new(
+            (AstIdentifierNode *)ast_id_clone((AstIdentifierNode *)id),
+            result);
+        break;
     default:
         result = id;
         break;

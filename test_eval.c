@@ -21,4 +21,29 @@ int main(void) {
         "alfa = 5\n"
         "alfa * bravo\n"
     , 35)
+
+    test_case(
+        "value = 2\n"
+        "value += 7\n"
+    , 9)
+
+    test_case(
+        "value = 2\n"
+        "value -= 7\n"
+    , -5)
+
+    test_case(
+        "value = 2\n"
+        "value *= 7\n"
+    , 14)
+
+    test_case(
+        "value = 1\n"
+        "value /= 2\n"
+    , 0.5)
+
+    test_case(
+        "value = 10\n"
+        "value //= 3\n"
+    , 3)
 }

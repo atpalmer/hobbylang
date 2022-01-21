@@ -54,6 +54,10 @@ AstNode *ast_id_new(const char *value) {
     return (AstNode *)new;
 }
 
+AstNode *ast_id_clone(AstIdentifierNode *node) {
+    return ast_id_new(node->value);
+}
+
 AstNode *ast_assign_new(AstIdentifierNode *id, AstNode *value) {
     AstAssignmentNode *new = malloc(sizeof *new);
     _base_init(&new->base, ASTT_ASSIGN);

@@ -22,10 +22,15 @@ struct symmap_entry {
 
 static const struct symmap_entry symmap[] = {
     {"\n",  TOKT_NEWLINE},
+    {"+=",  TOKT_PLUSEQ},
     {"+",   TOKT_PLUS},
+    {"-=",  TOKT_MINUSEQ},
     {"-",   TOKT_MINUS},
+    {"*=",  TOKT_STAREQ},
     {"**",  TOKT_DUBSTAR},
     {"*",   TOKT_STAR},
+    {"//=", TOKT_DUBSLASHEQ},
+    {"/=",  TOKT_SLASHEQ},
     {"//",  TOKT_DUBSLASH},
     {"/",   TOKT_SLASH},
     {"%",   TOKT_PERCENT},
