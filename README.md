@@ -7,26 +7,15 @@ Reads input from a file or an interactive console and computes results using dou
 Sample program:
 
 ```
-    42
-    x = 2 + 1
-    -2 + x * 2 + 5 - 1
-    -2 + x * (2 + 5) - 1
     alfa = 1
     bravo = 7
     alfa = 5
     alfa * bravo
 ```
 
-Expected output (one line of output for every line of input):
+Expected output is the evaluation of last line of the program block:
 
 ```
-    42.000000
-    3.000000
-    8.000000
-    18.000000
-    1.000000
-    7.000000
-    5.000000
     35.000000
 ```
 
