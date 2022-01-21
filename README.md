@@ -1,4 +1,4 @@
-# Double Calculator
+# hobbylang
 
 Reads input from a file or an interactive console and computes results using double floating-point arithmatic. Supports parentheses and variables.
 
@@ -28,11 +28,11 @@ From the project directory, run `make`.
 
 ## Running a program
 
-Run `calc [path]`. For example, to run `/samples/sample1.calc`, run `./calc ./samples/sample1.calc` from the project directory after running `make`.
+Run `hobby [path]`. For example, to run `/samples/sample1.hb`, run `./hobby ./samples/sample1.hb` from the project directory after running `make`.
 
 ## Interactive mode
 
-To run in interactive mode, simply run `calc` with no arguments.
+To run in interactive mode, simply run `hobby` with no arguments.
 
 Enter `Ctrl+D` to exit.
 

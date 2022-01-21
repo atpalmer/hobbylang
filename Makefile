@@ -1,4 +1,4 @@
-P=calc
+P=hobby
 TESTP=test
 OBJECTS=token.o parser.o ast.o eval.o mapobj.o syswrap.o doubleobj.o
 MAIN_OBJECTS=main.o
@@ -21,9 +21,9 @@ clean:
 	-rm $(OBJECTS) $(MAIN_OBJECTS) $(TEST_OBJECTS) $(TESTP) $P
 
 run: clean $P test
-	"./$P" "samples/sample1.calc"
-	"./$P" "samples/sample2.calc"
-	"./$P" "samples/sample3.calc"
+	"./$P" "samples/sample1.hb"
+	"./$P" "samples/sample2.hb"
+	"./$P" "samples/sample3.hb"
 
 interactive: clean $P
 	"./$P"
