@@ -2,7 +2,7 @@ P=calc
 TESTP=test
 OBJECTS=token.o parser.o ast.o eval.o mapobj.o syswrap.o doubleobj.o
 MAIN_OBJECTS=main.o
-TEST_OBJECTS=test_interpreter.o test_lexer.o test_parser.o
+TEST_OBJECTS=test_eval.o test_lexer.o test_parser.o
 CFLAGS=-Wall -Wextra -pedantic -g
 
 $P: $(OBJECTS) $(MAIN_OBJECTS)
@@ -13,7 +13,7 @@ test_%: $(OBJECTS) test_%.o
 	"./$(TESTP)"
 	rm "./$(TESTP)"
 
-test: test_lexer test_parser test_interpreter
+test: test_lexer test_parser test_eval
 
 .PHONY: clean all run install
 

@@ -68,7 +68,6 @@ static Object *MapObject_clone(Object *_this) {
 }
 
 static void MapObject_destroy(Object *this) {
-    mapentry_free(((MapObject *)this)->head);
     free(this);
 }
 

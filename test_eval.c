@@ -1,17 +1,15 @@
 #include <stdio.h>
-#include "interpreter.h"
+#include "eval.h"
 #include "test_asserts.h"
 
 
 #define test_case(text, expected)\
     {\
-        FILE *stream = fmemopen((void *)text, strlen(text), "r");\
         Object *varmap = MapObject_empty();\
-        Object *result = interpreter_eval(stream, varmap);\
+        Object *result = eval_string(text, varmap);\
         assert_equal(Object_as_double(result), expected);\
         Object_destroy(result);\
         Object_destroy(varmap);\
-        fclose(stream);\
     }
 
 int main(void) {
