@@ -39,14 +39,13 @@ int main(int argc, const char **argv) {
 
     FILE *stream = fopen_or_die(argv[1], "r");
 
-    for(;;) {
-        Object *value = interpreter_eval(stream, NULL);
-        if(!value)
-            break;
-        Object_println(value);
-        Object_destroy(value);
-    }
+    Object *value = interpreter_eval(stream, NULL);
+    if(!value)
+        goto out;
+    Object_println(value);
+    Object_destroy(value);
 
+out:
     printf("\n");
     fclose(stream);
     return 0;
