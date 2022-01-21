@@ -43,7 +43,7 @@ static Object *_interpret_block(AstBlockNode *block, Object *_vars) {
     if(block->count < 1)
         die(InternaleError, "AstBlockNode must contain at least one child");
 
-    Object *scope_vars = Object_clone(_vars);
+    Object *scope_vars = _vars ? Object_clone(_vars) : MapObject_empty();
 
     unsigned i = 0;
     for(; i < block->count - 1; ++i) {
